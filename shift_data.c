@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 	if(outfile==NULL)
 	{
 		printf("Unable to open input file: %s\n", argv[2]);
+		fclose(infile);
 		return 1;
 	}
 
@@ -46,10 +47,14 @@ int main(int argc, char *argv[])
 	if(ferror(infile) || ferror(outfile))
 	{
 		printf("An error occurred, file is in an incomplete state\n");
+		fclose(infile);
+		fclose(outfile);
 		return 1;
 	}
 
 	printf("Point cloud shifted by {x, y, z} = {%f, %f, %f}\n", shift_x, shift_y, shift_z);
 
+	fclose(infile);
+	fclose(outfile);
 	return 0;
 }

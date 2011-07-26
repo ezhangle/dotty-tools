@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 	if(outfile == NULL)
 	{
 		printf("Error opening %s.", argv[2]);
+		fclose(infile);
 		return 1;
 	}
 

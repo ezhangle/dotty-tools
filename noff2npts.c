@@ -22,6 +22,15 @@ int main(int argc, char **argv)
 
 	noff_file = fopen( argv[1], "r");
 	npts_file = fopen( argv[2], "w");
+	
+	if(!noff_file || !npts_file)
+	{
+		if(noff_file)	fclose(noff_file);
+		if(npts_file)	fclose(npts_file);
+
+		fprintf(stderr, "Failed to open files.\n");
+		return 1;
+	}
 
 	getc(noff_file);
 	getc(noff_file);
@@ -32,6 +41,7 @@ int main(int argc, char **argv)
 		, &numverts, &numfaces, &numedges) )
 	{
 		fprintf(stderr, "Error reading %s\n", argv[1]);
+		fclose(npts_file);
 		fclose(noff_file);
 		return 1;
 	}
