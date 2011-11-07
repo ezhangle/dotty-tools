@@ -13,7 +13,7 @@ CFLAGS=$(GCCFLAGS)
 PCA_LD_FLAGS=-L/usr/local/lib -uloclib -lgsl -lgslcblas
 PCA_FLAGS=$(CFLAGS) -ulocinclude -I/usr/local/include
 
-TGT_DIR=/bin
+TGT_DIR=$(HOME)/bin
 INST_DIR=/usr/local/bin
 
 all:	gen_analytic \

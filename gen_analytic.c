@@ -2,10 +2,15 @@
 #include <stdlib.h>
 #include <math.h>
 
-void generate_torus(FILE *sample_fp);
-void generate_cube(FILE *sample_fp);
-void generate_sphere(FILE *sample_fp);
-void generate_bulbous(FILE *pcloud_fp);
+void generate_plane(FILE *pc_fp, FILE *npc_fp);
+void generate_torus(FILE *pc_fp, FILE *npc_fp);
+void generate_cube(FILE *pc_fp, FILE *npc_fp);
+void generate_sphere(FILE *pc_fp, FILE *npc_fp);
+void generate_bulbous(FILE *pc_fp, FILE *npc_fp);
+void open_files(FILE **pc_fp
+		, FILE **npc_fp
+		, char *pc_name
+		, char *npc_name);
 
 double x, y, z, nx, ny, nz;
 
@@ -22,36 +27,70 @@ void abort_if_null(FILE *fp, char *filename)
 
 int main()
 {
-	FILE *pcloud_fp = NULL;
+	FILE *pc_fp = NULL;
+	FILE *npc_fp = NULL;
 
-	pcloud_fp = fopen("sphere.npts", "w");
-	abort_if_null(pcloud_fp, "sphere.npts");
-	generate_sphere(pcloud_fp);
-	fclose(pcloud_fp);
+	open_files(&pc_fp, &npc_fp, "plane.pts", "plane.npts");
+	generate_plane(pc_fp, npc_fp);
+	fclose(pc_fp);	fclose(npc_fp);
 
-	pcloud_fp = fopen("torus.npts", "w");
-	abort_if_null(pcloud_fp, "torus.npts");
-	generate_torus(pcloud_fp);
-	fclose(pcloud_fp);
+#if 0
+	open_files(&pc_fp, &npc_fp, "sphere.pts", "sphere.npts");
+	generate_sphere(pc_fp);
+	fclose(pc_fp);	fclose(npc_fp);
 
-	pcloud_fp = fopen("cube.npts", "w");
-	abort_if_null(pcloud_fp, "cube.npts");
-	generate_cube(pcloud_fp);
-	fclose(pcloud_fp);
+	open_files(&pc_fp, &npc_fp, "torus.pts", "torus.npts");
+	generate_torus(pc_fp);
+	fclose(pc_fp);	fclose(npc_fp);
 
-/*
-	pcloud_fp = fopen("bulbous.npts", "w");
-	abort_if_null(pcloud_fp, "bulbous.npts");
-	generate_bulbous(pcloud_fp);
-	fclose(pcloud_fp);
-*/
+	open_files(&pc_fp, &npc_fp, "cube.pts", "cube.npts");
+	generate_cube(pc_fp);
+	fclose(pc_fp);	fclose(npc_fp);
+
+	open_files(&pc_fp, &npc_fp, "bulbous.pts", "bulbous.npts");
+	generate_bulbous(pc_fp);
+	fclose(pc_fp);	fclose(npc_fp);
+#endif
 
 	return EXIT_SUCCESS;
 }
 
-void generate_sphere(FILE *pcloud_fp)
+void open_files(FILE **pc_fp
+		, FILE **npc_fp
+		, char *pc_name
+		, char *npc_name)
 {
-	double r = 50;
+	*pc_fp = fopen(pc_name, "w");
+	*npc_fp = fopen(npc_name, "w");
+	
+	abort_if_null(*pc_fp, pc_name);
+	abort_if_null(*npc_fp, npc_name);
+}
+
+void generate_plane(FILE *pc_fp, FILE *npc_fp)
+{
+	double length = 50.0;
+	double width = 25.0;
+
+	double lpos = -length/2.0;
+	double wpos = -width/2.0;
+
+	for(; lpos < length; ++lpos)
+	{
+		for(wpos = -width/2.0; wpos < (width/2.0); ++wpos)
+		{
+			fprintf(pc_fp, "%f %f %f\n", lpos, wpos, 0.0);
+
+			fprintf(npc_fp, "%f %f %f ", lpos, wpos, 0.0);
+			fprintf(npc_fp, "%f %f %f\n", 0.0, 0.0, 1.0);
+		}
+	}
+	return;
+}
+
+void generate_sphere(FILE *pc_fp, FILE *npc_fp)
+{
+	double r = 50.0;
 	double theta = 0.0;
 	double psi = 0.0;
 	double range = 6.28318 / 1000.0; 
@@ -68,15 +107,17 @@ void generate_sphere(FILE *pcloud_fp)
 			y = r * ny;
 			z = r * nz;
 
-			fprintf(pcloud_fp, "%f %f %f ", x, y, z);
-			fprintf(pcloud_fp, "%f %f %f\n", nx, ny, nz);
+			fprintf(pc_fp, "%f %f %f\n", x, y, z);
+
+			fprintf(npc_fp, "%f %f %f ", x, y, z);
+			fprintf(npc_fp, "%f %f %f\n", nx, ny, nz);
 		}
 	}
 	return;
 }
 
 /** r_1 = doughnut radius, r_2 = radius of ``tube'', r_2 assumed = 1.0 */
-void generate_torus(FILE *pcloud_fp)
+void generate_torus(FILE *pc_fp, FILE *npc_fp)
 {
 	double theta = 0.0;
 	double psi = 0.0;
@@ -116,61 +157,69 @@ void generate_torus(FILE *pcloud_fp)
 				nrm[i] = rm[i][0]*nx + rm[i][1]*ny + rm[i][2]*nz;
 			}
 
-			fprintf(pcloud_fp, "%f %f %f ", pos[2], pos[1], pos[0]);
-			fprintf(pcloud_fp, "%f %f %f\n", nrm[2], nrm[1], nrm[0]);
+			fprintf(pc_fp, "%f %f %f\n", pos[2], pos[1], pos[0]);
+
+			fprintf(npc_fp, "%f %f %f ", pos[2], pos[1], pos[0]);
+			fprintf(npc_fp, "%f %f %f\n", nrm[2], nrm[1], nrm[0]);
 		}
 	}
 
 	return;
 }	
-void generate_cube(FILE *pcloud_fp)
+void generate_cube(FILE *pc_fp, FILE *npc_fp)
 {
-	long int num_samples = 500000;
+	long int num_s = 500000;
 	long int side_length = 80;
 	long int i = 0;
 
-	for(; i != num_samples; ++i)
+	for(; i != num_s; ++i)
 	{
 		
 		x = RANDY() * side_length;		nx = 0.0;
 		y = RANDY() * side_length;		ny = 0.0;
 		z = 0.5 * side_length;			nz = 1.0;
-		fprintf(pcloud_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 
 		x = RANDY() * side_length;		nx = 0.0;
 		y = RANDY() * side_length;		ny = 0.0;
 		z = -0.5 * side_length;			nz = -1.0;
-		fprintf(pcloud_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 		
 		x = RANDY() * side_length;		nx = 0.0;
 		y = 0.5 * side_length;			ny = 1.0;
 		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pcloud_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 		
 		x = RANDY() * side_length;		nx = 0.0;
 		y = -0.5 * side_length;			ny = -1.0;
 		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pcloud_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 		
 		x = 0.5 * side_length;			nx = 1.0;
 		y = RANDY() * side_length;		ny = 0.0;
 		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pcloud_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 		
 		x = -0.5 * side_length;			nx = -1.0;
 		y = RANDY() * side_length;		ny = 0.0;
 		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pcloud_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 	}
 	return;
 }
-void generate_bulbous(FILE *pcloud_fp)
+void generate_bulbous(FILE *pc_fp, FILE *npc_fp)
 {
 	double r = 40.0;
 	double range = 6.28318 / 3000.0; 
@@ -196,8 +245,10 @@ void generate_bulbous(FILE *pcloud_fp)
 			ny = r * sin(dtheta) * cos(dpsi);
 			nz = r * sin(dpsi);
 				
-			fprintf(pcloud_fp, "%f %f %f ", x, y, z);
-			fprintf(pcloud_fp, "%f %f %f\n", nx, ny, nz);
+			fprintf(pc_fp, "%f %f %f\n", x, y, z);
+
+			fprintf(npc_fp, "%f %f %f ", x, y, z);
+			fprintf(npc_fp, "%f %f %f\n", nx, ny, nz);
 		}
 	}
 	return;
