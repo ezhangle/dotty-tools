@@ -30,25 +30,27 @@ int main()
 	FILE *pc_fp = NULL;
 	FILE *npc_fp = NULL;
 
+#if 0
 	open_files(&pc_fp, &npc_fp, "plane.pts", "plane.npts");
 	generate_plane(pc_fp, npc_fp);
 	fclose(pc_fp);	fclose(npc_fp);
+#endif
 
-#if 0
 	open_files(&pc_fp, &npc_fp, "sphere.pts", "sphere.npts");
-	generate_sphere(pc_fp);
+	generate_sphere(pc_fp, npc_fp);
 	fclose(pc_fp);	fclose(npc_fp);
 
+#if 0
 	open_files(&pc_fp, &npc_fp, "torus.pts", "torus.npts");
-	generate_torus(pc_fp);
+	generate_torus(pc_fp, npc_fp);
 	fclose(pc_fp);	fclose(npc_fp);
 
 	open_files(&pc_fp, &npc_fp, "cube.pts", "cube.npts");
-	generate_cube(pc_fp);
+	generate_cube(pc_fp, npc_fp);
 	fclose(pc_fp);	fclose(npc_fp);
 
 	open_files(&pc_fp, &npc_fp, "bulbous.pts", "bulbous.npts");
-	generate_bulbous(pc_fp);
+	generate_bulbous(pc_fp, npc_fp);
 	fclose(pc_fp);	fclose(npc_fp);
 #endif
 
@@ -90,10 +92,10 @@ void generate_plane(FILE *pc_fp, FILE *npc_fp)
 
 void generate_sphere(FILE *pc_fp, FILE *npc_fp)
 {
-	double r = 50.0;
+	double r = 30.0;
 	double theta = 0.0;
 	double psi = 0.0;
-	double range = 6.28318 / 1000.0; 
+	double range = 6.28318 / 100.0; 
 
 	for(; theta < 6.28318; theta+=range)
 	{
