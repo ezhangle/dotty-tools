@@ -1,0 +1,29 @@
+Mbnpts2npts	bnpts2npts.c	/^int main(int argc, char **argv)$/
+Mdata_size	data_size.c	/^int main(int argc, char **argv)$/
+Mgen_analytic	gen_analytic.c	/^int main()$/
+Mnoff2npts	noff2npts.c	/^int main(int argc, char **argv)$/
+Mpca	pca.c	/^int main(int argc, char *argv[])$/
+Mscale	scale.c	/^int main(int argc, char **argv)$/
+Mshift_data	shift_data.c	/^int main(int argc, char *argv[])$/
+Mswap_yz	swap_yz.c	/^int main(int argc, char *argv[])$/
+Mysort	ysort.c	/^int main(int argc, char *argv[])$/
+RANDY	gen_analytic.c	/^#define RANDY()		(( rand() \/ (RAND_MAX+1.0) ) - 0/
+abort_if_null	utilities.c	/^void abort_if_null(FILE *fp, char *filename)$/
+cmp	ysort.c	/^int cmp(const void *arg1, const void *arg2)$/
+compute_PCA	pca.c	/^void compute_PCA(FILE *infile$/
+compute_means	pca.c	/^void compute_means(FILE *infile$/
+detect_normals	utilities.c	/^int detect_normals(FILE *fp)$/
+generate_bulbous	gen_analytic.c	/^void generate_bulbous(FILE *pc_fp, FILE *npc_fp)$/
+generate_cube	gen_analytic.c	/^void generate_cube(FILE *pc_fp, FILE *npc_fp)$/
+generate_plane	gen_analytic.c	/^void generate_plane(FILE *pc_fp, FILE *npc_fp)$/
+generate_sphere	gen_analytic.c	/^void generate_sphere(FILE *pc_fp, FILE *npc_fp)$/
+generate_torus	gen_analytic.c	/^void generate_torus(FILE *pc_fp, FILE *npc_fp)$/
+get_eigenvectors	pca.c	/^void get_eigenvectors(double data_src[NUM_ROWS][NU/
+normalise_evecs	pca.c	/^void normalise_evecs(double evecs[NUM_ROWS][NUM_CO/
+normalise_matrix	pca.c	/^void normalise_matrix(double m[NUM_ROWS][NUM_COLS]/
+open_files	utilities.c	/^void open_files(FILE **infile$/
+sample_point	ysort.c	/^typedef struct { vector pos, norm; }	sample_point;/
+store_samples	ysort.c	/^void store_samples(FILE *fp, sample_point *samples/
+transpose_matrix	pca.c	/^void transpose_matrix(double matrix[NUM_ROWS][NUM_/
+vector	ysort.c	/^typedef struct { float x, y, z; }	vector;$/
+write_transformed	pca.c	/^void write_transformed(FILE *infile$/

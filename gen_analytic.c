@@ -2,28 +2,17 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "utilities.h"
+
 void generate_plane(FILE *pc_fp, FILE *npc_fp);
 void generate_torus(FILE *pc_fp, FILE *npc_fp);
 void generate_cube(FILE *pc_fp, FILE *npc_fp);
 void generate_sphere(FILE *pc_fp, FILE *npc_fp);
 void generate_bulbous(FILE *pc_fp, FILE *npc_fp);
-void open_files(FILE **pc_fp
-		, FILE **npc_fp
-		, char *pc_name
-		, char *npc_name);
 
 double x, y, z, nx, ny, nz;
 
 #define RANDY()		(( rand() / (RAND_MAX+1.0) ) - 0.5)
-
-void abort_if_null(FILE *fp, char *filename)
-{
-	if(fp)
-		return;
-
-	fprintf(stderr, "Unable to open %s, aborting.\n", filename);
-	exit(EXIT_FAILURE);
-}
 
 int main()
 {
@@ -31,42 +20,40 @@ int main()
 	FILE *npc_fp = NULL;
 
 #if 0
-	open_files(&pc_fp, &npc_fp, "plane.pts", "plane.npts");
+	open_file(&pc_fp, "plane.pts", "w");
+	open_file(&npc_fp, "plane.npts", "w");
 	generate_plane(pc_fp, npc_fp);
-	fclose(pc_fp);	fclose(npc_fp);
+	fclose(pc_fp);
+	fclose(npc_fp);
 #endif
 
-	open_files(&pc_fp, &npc_fp, "sphere.pts", "sphere.npts");
+	open_file(&pc_fp, "sphere.pts", "w");
+	open_file(&npc_fp, "sphere.npts", "w");
 	generate_sphere(pc_fp, npc_fp);
-	fclose(pc_fp);	fclose(npc_fp);
+	fclose(pc_fp);
+	fclose(npc_fp);
 
 #if 0
-	open_files(&pc_fp, &npc_fp, "torus.pts", "torus.npts");
+	open_file(&pc_fp, "torus.pts", "w");
+	open_file(&npc_fp, "torus.npts", "w");
 	generate_torus(pc_fp, npc_fp);
-	fclose(pc_fp);	fclose(npc_fp);
+	fclose(pc_fp);
+	fclose(npc_fp);
 
-	open_files(&pc_fp, &npc_fp, "cube.pts", "cube.npts");
+	open_file(&pc_fp, "cube.pts", "w");
+	open_file(&npc_fp, "cube.npts", "w");
 	generate_cube(pc_fp, npc_fp);
-	fclose(pc_fp);	fclose(npc_fp);
+	fclose(pc_fp);
+	fclose(npc_fp);
 
-	open_files(&pc_fp, &npc_fp, "bulbous.pts", "bulbous.npts");
+	open_file(&pc_fp, "bulbous.pts", "w");
+	open_file(&npc_fp, "bulbous.npts", "w");
 	generate_bulbous(pc_fp, npc_fp);
-	fclose(pc_fp);	fclose(npc_fp);
+	fclose(pc_fp);
+	fclose(npc_fp);
 #endif
 
 	return EXIT_SUCCESS;
-}
-
-void open_files(FILE **pc_fp
-		, FILE **npc_fp
-		, char *pc_name
-		, char *npc_name)
-{
-	*pc_fp = fopen(pc_name, "w");
-	*npc_fp = fopen(npc_name, "w");
-	
-	abort_if_null(*pc_fp, pc_name);
-	abort_if_null(*npc_fp, npc_name);
 }
 
 void generate_plane(FILE *pc_fp, FILE *npc_fp)

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "utilities.h"
 #include "macros.h"
 
 int main(int argc, char **argv)
@@ -14,6 +15,8 @@ int main(int argc, char **argv)
 
 	unsigned long ratio = 1;
 	unsigned long counter = 0;
+	int has_normals = 0;
+	char *format_string = NULL;
 
 	if( argc != 4 && argc !=5)
 	{
@@ -23,27 +26,29 @@ int main(int argc, char **argv)
 	}
 
 	scale = atof( argv[1] );
-	infile = fopen( argv[2], "r" );
-	outfile = fopen( argv[3], "w" );
+	open_file(&infile, argv[2], "r");
+	open_file(&outfile, argv[3], "w");
 
 	if(argv[4])
 		ratio = (unsigned long)atoi(argv[4]);
 
-	if( infile == NULL )
+	has_normals = detect_normals(infile);
+	switch(has_normals)
 	{
-		fprintf(stderr, "Unable to open %s, exiting.\n", argv[2]);
-		exit(EXIT_FAILURE);
+		default:
+			fclose(infile);
+			exit(EXIT_FAILURE);
+		case 0:
+			format_string = "%lf %lf %lf";
+			break;
+		case 1: 
+			format_string = "%lf %lf %lf %lf %lf %lf";
+			break;
 	}
 
-	if( outfile == NULL )
-	{
-		fprintf(stderr, "Unable to open %s, exiting.\n", argv[3]);
-		exit(EXIT_FAILURE);
-	}
-
-	/* read until the file finishes */
-	while( EOF != fscanf(infile, "%lf %lf %lf %lf %lf %lf"
-					, &x, &y, &z, &nx, &ny, &nz ) )
+	/* if there are no normals, nx, ny and nz are ignored */
+	while( EOF != fscanf(infile, format_string
+				, &x, &y, &z, &nx, &ny, &nz ) )
 	{
 		++counter;
 
@@ -51,7 +56,9 @@ int main(int argc, char **argv)
 			continue;
 
 		fprintf(outfile, "%f %f %f ", scale*x, scale*y, scale*z);
-		fprintf(outfile, "%f %f %f\n", nx, ny, nz );
+		if(has_normals)
+			fprintf(outfile, " %f %f %f", nx, ny, nz );
+		fprintf(outfile, "\n");
 	}
 
 	fclose(infile);

@@ -71,11 +71,11 @@ swap_yz:	swap_yz.c
 gen_sphere:	gen_sphere.c
 	$(CC) $(CFLAGS) -lm $(<) -o $(TGT_DIR)/$(@)
 
-gen_analytic:	gen_analytic.c
-	$(CC) $(CFLAGS) -lm $(<) -o $(TGT_DIR)/$(@)
+gen_analytic:	gen_analytic.c utilities.o
+	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@)
 
-scale:	scale.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
+scale:	scale.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
 data_size:	data_size.c utilities.o
 	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)

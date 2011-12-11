@@ -33,37 +33,21 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	test_file = fopen( argv[1], "r");
-	if( test_file==NULL)
-	{
-		printf("Error opening %s, aborting.\n", argv[1] );
-		return EXIT_FAILURE;
-	}
-
-	if(argc == 3)
-	{
-		normed_file = fopen(argv[2], "w");
-		printf("Error opening %s, aborting.\n", argv[2] );
-		fclose(test_file);
-		return EXIT_FAILURE;
-	}
+	open_file(&test_file, argv[1], "r");
+	if(argv[2])
+		open_file(&normed_file, argv[2], "w");
 
 	has_normals = detect_normals(test_file);
-
 	switch(has_normals)
 	{
-		case -3:
-		case -2:
-		case -1:
+		default:
 			fclose(test_file);
 			exit(EXIT_FAILURE);
 		case 0:
 			format_string = "%lf %lf %lf\n";
-			printf("no normals found\n");
 			break;
 		case 1: 
 			format_string = "%lf %lf %lf %*f %*f %*f\n";
-			printf("normals detected\n");
 			break;
 	}
 

@@ -1,6 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void open_file(FILE **fp
+		, char *filename
+		, char *mode)
+{
+	*fp = fopen(filename, mode);
+
+	if(fp)
+		return;
+
+	fprintf(stderr, "Unable to open %s, aborting.\n", filename);
+	exit(EXIT_FAILURE);
+}
+
 int detect_normals(FILE *fp)
 {
 	int items = 0;			/* items on the first line */
