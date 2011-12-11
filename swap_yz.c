@@ -39,17 +39,10 @@ int main(int argc, char *argv[])
 	open_file(&outfile, argv[2], "w");
 
 	has_normals = detect_normals(infile);
-	switch(has_normals)
-	{
-		default:
-			exit(EXIT_FAILURE);
-		case 0:
-			format_string = "%lf %lf %lf";
-			break;
-		case 1: 
-			format_string = "%lf %lf %lf %lf %lf %lf";
-			break;
-	}
+	if(has_normals)
+		format_string = "%lf %lf %lf";
+	else
+		format_string = "%lf %lf %lf %lf %lf %lf";
 
 	/* remember to swap the normals as well */
 	switch(to_swap)

@@ -32,7 +32,7 @@ int detect_normals(FILE *fp)
 	if(line_length==0)
 	{
 		printf("Error reading first line of file.\n");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 
 	rewind(fp);
@@ -41,7 +41,7 @@ int detect_normals(FILE *fp)
 	if(NULL==first_line)
 	{
 		printf("Not enough memory for normal detection.\n");
-		return -2;
+		exit(EXIT_FAILURE);
 	}
 
 	fgets(first_line, (int)line_length, fp);
@@ -56,9 +56,9 @@ int detect_normals(FILE *fp)
 		has_normals = 0;
 	else
 	{
-		fprintf(stderr, "%d items present per line: ambiguous."
-				" Unexpected results likely.\n", items);
-		has_normals = -3;
+		printf("%d items present per line: ambiguous."
+			" Unexpected results likely.\n", items);
+		exit(EXIT_FAILURE);
 	}
 
 	return has_normals;
