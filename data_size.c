@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <float.h>
 
+#include "utilities.h"
 #include "macros.h"
 
 /**
@@ -13,9 +14,6 @@ int main(int argc, char **argv)
 {
 	FILE * test_file = NULL;
 	FILE * normed_file = NULL;
-#if 0
-	FILE * stat_fp = NULL;
-#endif
 
 	double x, y, z;
 	double nx, ny, nz;
@@ -24,22 +22,52 @@ int main(int argc, char **argv)
 	double min_x, min_y, min_z;
 
 	unsigned long int num_points = 0;
+	int has_normals = 0;
+
+	char *format_string = NULL;
 
 	if( argc < 2 )
 	{
-		fprintf(stderr, "format is: %s <file-to-test> <opt: normalised-file>\n", argv[0] );
+		fprintf(stderr, "format is: %s <file-to-test>"
+				" <opt: normalised-file>\n", argv[0] );
 		return 1;
 	}
 
 	test_file = fopen( argv[1], "r");
-
 	if( test_file==NULL)
 	{
 		printf("Error opening %s, aborting.\n", argv[1] );
 		return EXIT_FAILURE;
 	}
 
-	if( EOF == fscanf(test_file, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &nx, &ny, &nz) )
+	if(argc == 3)
+	{
+		normed_file = fopen(argv[2], "w");
+		printf("Error opening %s, aborting.\n", argv[2] );
+		fclose(test_file);
+		return EXIT_FAILURE;
+	}
+
+	has_normals = detect_normals(test_file);
+
+	switch(has_normals)
+	{
+		case -3:
+		case -2:
+		case -1:
+			fclose(test_file);
+			exit(EXIT_FAILURE);
+		case 0:
+			format_string = "%lf %lf %lf\n";
+			printf("no normals found\n");
+			break;
+		case 1: 
+			format_string = "%lf %lf %lf %*f %*f %*f\n";
+			printf("normals detected\n");
+			break;
+	}
+
+	if( EOF == fscanf(test_file, format_string, &x, &y, &z) )
 	{
 		fprintf(stderr, "Error reading file, must exit.\n");
 		fclose(test_file);
@@ -51,13 +79,7 @@ int main(int argc, char **argv)
 	max_z = min_z = z;
 	++num_points;
 
-#if 0
-	stat_fp = fopen( "size_stats.gp", "w" );
-	fprintf(stat_fp, "%lf %lf %lf\n", x, y, z);
-#endif
-
-	while( EOF != fscanf(test_file, " %lf %lf %lf %lf %lf %lf"
-					, &x, &y, &z, &nx, &ny, &nz) )
+	while( EOF != fscanf(test_file, format_string, &x, &y, &z) )
 	{
 		max_x = max(x, max_x);
 		max_y = max(y, max_y);
@@ -67,42 +89,45 @@ int main(int argc, char **argv)
 		min_y = min(y, min_y);
 		min_z = min(z, min_z);
 
-#if 0
-		fprintf(stat_fp, "%lf %lf %lf\n", x, y, z);
-#endif
 		++num_points;
 	}
-#if 0
-	fclose(stat_fp);
-#endif
-	
-	
-	normed_file = fopen( argv[2], "w");
-	if( normed_file != NULL )
+
+	/* will only be null here if no argument provided */
+	if(normed_file != NULL)
 	{
 		/* get a uniform range of point data */
-		double avg_x = (max_x + min_x)/2.0;
-		double avg_y = (max_y + min_y)/2.0;
-		double avg_z = (max_z + min_z)/2.0;
+		double mid_x = (max_x + min_x)/2.0;
+		double mid_y = (max_y + min_y)/2.0;
+		double mid_z = (max_z + min_z)/2.0;
 
 		fseek(test_file, 0, SEEK_SET);
-		while( EOF != fscanf(test_file, "%lf %lf %lf %lf %lf %lf"
+
+		/* if there are no normals, nx, ny and nz are ignored */
+		while( EOF != fscanf(test_file, format_string
 				, &x, &y, &z, &nx, &ny, &nz) )
 		{
-			fprintf(normed_file, "%f %f %f %f %f %f\n"
-				, x-avg_x, y-avg_y, z-avg_z, nx, ny, nz);
+			fprintf(normed_file, "%f %f %f"
+				, x-mid_x, y-mid_y, z-mid_z);
+
+			if(has_normals)
+			{
+				fprintf(normed_file, " %f %f %f"
+							, nx, ny, nz);
+			}
+			fprintf(normed_file, "\n");
 		}
-		fclose(test_file);
 		fclose(normed_file);
 	}
 
-	fprintf(stdout, "max_x = %f,\t min_x = %f\n", max_x, min_x);
-	fprintf(stdout, "max_y = %f,\t min_y = %f\n", max_y, min_y);
-	fprintf(stdout, "max_z = %f,\t min_z = %f\n", max_z, min_z);
+	printf("max_x = %f,\t min_x = %f\n", max_x, min_x);
+	printf("max_y = %f,\t min_y = %f\n", max_y, min_y);
+	printf("max_z = %f,\t min_z = %f\n", max_z, min_z);
 
-	fprintf(stdout, "x_range = %f\n", max_x - min_x);
-	fprintf(stdout, "y_range = %f\n", max_y - min_y);
-	fprintf(stdout, "z_range = %f\n", max_z - min_z);
+	printf("x_range = %f\n", max_x - min_x);
+	printf("y_range = %f\n", max_y - min_y);
+	printf("z_range = %f\n", max_z - min_z);
+
+	fclose(test_file);
 
 	return EXIT_SUCCESS;
 }

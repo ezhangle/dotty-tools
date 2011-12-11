@@ -77,12 +77,15 @@ gen_analytic:	gen_analytic.c
 scale:	scale.c
 	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
 
-data_size:	data_size.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
+data_size:	data_size.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
 noff2npts:	noff2npts.c
 	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
 
 bnpts2npts:	bnpts2npts.c
 	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
+
+utilities.o:	utilities.c utilities.h
+	$(CC) -c $(CFLAGS) $(<) -o $(@)
 

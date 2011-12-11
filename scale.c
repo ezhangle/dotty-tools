@@ -42,7 +42,8 @@ int main(int argc, char **argv)
 	}
 
 	/* read until the file finishes */
-	while( EOF != fscanf(infile, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &nx, &ny, &nz ) )
+	while( EOF != fscanf(infile, "%lf %lf %lf %lf %lf %lf"
+					, &x, &y, &z, &nx, &ny, &nz ) )
 	{
 		++counter;
 
@@ -53,8 +54,8 @@ int main(int argc, char **argv)
 		fprintf(outfile, "%f %f %f\n", nx, ny, nz );
 	}
 
-	(void)fclose(infile);
-	(void)fclose(outfile);
+	fclose(infile);
+	fclose(outfile);
 
 	return EXIT_SUCCESS;
 }
