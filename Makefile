@@ -59,17 +59,14 @@ uninstall:
 pca:		pca.c pca.h 
 	$(CC) $(PCA_FLAGS) -o $(TGT_DIR)/pca pca.c $(PCA_LD_FLAGS) 
 
-ysort:		ysort.c
-	$(CC) $(CFLAGS) -lm $(<) -o $(TGT_DIR)/$(@)
+ysort:		ysort.c utilities.o
+	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@)
 
-shift_data:	shift_data.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
+shift_data:	shift_data.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
-swap_yz:	swap_yz.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
-
-gen_sphere:	gen_sphere.c
-	$(CC) $(CFLAGS) -lm $(<) -o $(TGT_DIR)/$(@)
+swap_yz:	swap_yz.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
 gen_analytic:	gen_analytic.c utilities.o
 	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@)
@@ -80,11 +77,11 @@ scale:	scale.c utilities.o
 data_size:	data_size.c utilities.o
 	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
-noff2npts:	noff2npts.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
+noff2npts:	noff2npts.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
-bnpts2npts:	bnpts2npts.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@)
+bnpts2npts:	bnpts2npts.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
 utilities.o:	utilities.c utilities.h
 	$(CC) -c $(CFLAGS) $(<) -o $(@)

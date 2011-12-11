@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "utilities.h"
+
 /**
 	This program reads a normal-augmented OFF file and
 	produces a normal-augmented point cloud from the
@@ -20,18 +22,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	noff_file = fopen( argv[1], "r");
-	npts_file = fopen( argv[2], "w");
+	open_file(&noff_file, argv[1], "r");
+	open_file(&npts_file, argv[2], "w");
 	
-	if(!noff_file || !npts_file)
-	{
-		if(noff_file)	fclose(noff_file);
-		if(npts_file)	fclose(npts_file);
-
-		fprintf(stderr, "Failed to open files.\n");
-		return 1;
-	}
-
 	getc(noff_file);
 	getc(noff_file);
 	getc(noff_file);

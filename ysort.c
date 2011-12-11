@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "utilities.h"
+
 typedef struct { float x, y, z; }	vector;
 typedef struct { vector pos, norm; }	sample_point;
 
@@ -35,21 +37,8 @@ int main(int argc, char *argv[])
 	samp_fp = fopen(argv[1], "r");
 	ysort_fp = fopen(argv[2], "w");
 
-	if(!samp_fp || !ysort_fp)
-	{
-		if(samp_fp)
-		{
-			fprintf(stderr, "Unable to open %s.\n", argv[2]);
-			fclose(samp_fp);
-		}
-
-		if(ysort_fp)
-		{
-			fprintf(stderr, "Unable to open %s.\n", argv[1]);
-			fclose(ysort_fp);
-		}
-		exit(EXIT_FAILURE);
-	}
+	open_file(&samp_fp, argv[1], "r");
+	open_file(&ysort_fp, argv[2], "w");
 
 	fscanf(samp_fp, "%*f %*f %lf", &last_z);
 	rewind(samp_fp);

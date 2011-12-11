@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+#include "utilities.h"
 
 /*
-	This program swaps the y and z coordinates of a .npts file
+*	This program swaps the y and z coordinates .npts and .pts files
 */
 
 int main(int argc, char *argv[])
@@ -15,10 +18,13 @@ int main(int argc, char *argv[])
 
 	enum {	XY_SWAP, XZ_SWAP, YZ_SWAP };
 	int to_swap = XY_SWAP;
+	int has_normals = 0;
+	char *format_string = NULL;
 
 	if(argc!=4)
 	{
-		printf("Syntax is: %s <infile> <swapped-file> <\"xy\" swap>\n", argv[0]);
+		printf("Syntax is: %s <infile> <swapped-file>"
+			" <\"xy\" swap>\n", argv[0]);
 		return 0;
 	}
 
@@ -29,36 +35,49 @@ int main(int argc, char *argv[])
 	else if(!strcmp("yz", argv[3]))
 		to_swap = YZ_SWAP;
 
-	infile = fopen(argv[1], "r");
-	if(infile == NULL)
-	{
-		printf("Error opening %s.", argv[1]);
-		return 1;
-	}
+	open_file(&infile, argv[1], "r");
+	open_file(&outfile, argv[2], "w");
 
-	outfile = fopen(argv[2], "w");
-	if(outfile == NULL)
+	has_normals = detect_normals(infile);
+	switch(has_normals)
 	{
-		printf("Error opening %s.", argv[2]);
-		fclose(infile);
-		return 1;
+		default:
+			exit(EXIT_FAILURE);
+		case 0:
+			format_string = "%lf %lf %lf";
+			break;
+		case 1: 
+			format_string = "%lf %lf %lf %lf %lf %lf";
+			break;
 	}
 
 	/* remember to swap the normals as well */
 	switch(to_swap)
 	{
 	case XY_SWAP:
-		while(EOF != fscanf(infile, "%f %f %f %f %f %f", &x, &y, &z, &nx, &ny, &nz))
-			fprintf(outfile, "%f %f %f %f %f %f\n", y, x, z, ny, nx, nz);
+		while(EOF != fscanf(infile, format_string
+					, &x, &y, &z, &nx, &ny, &nz))
+		{
+			fprintf(outfile, format_string
+					, y, x, z, ny, nx, nz);
+		}
 		break;
 	case XZ_SWAP:
-		while(EOF != fscanf(infile, "%f %f %f %f %f %f", &x, &y, &z, &nx, &ny, &nz))
-			fprintf(outfile, "%f %f %f %f %f %f\n", z, y, x, nz, ny, nx);
+		while(EOF != fscanf(infile, format_string
+					, &x, &y, &z, &nx, &ny, &nz))
+		{
+			fprintf(outfile, format_string
+					, z, y, x, nz, ny, nx);
+		}
 		break;
 
 	case YZ_SWAP:
-		while(EOF != fscanf(infile, "%f %f %f %f %f %f", &x, &y, &z, &nx, &ny, &nz))
-			fprintf(outfile, "%f %f %f %f %f %f\n", x, z, y, nx, nz, ny);
+		while(EOF != fscanf(infile, format_string
+					, &x, &y, &z, &nx, &ny, &nz))
+		{
+			fprintf(outfile, format_string
+					, x, z, y, nx, nz, ny);
+		}
 		break;
 	}
 
