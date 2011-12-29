@@ -69,7 +69,7 @@ swap_yz:	swap_yz.c utilities.o
 	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
 
 gen_analytic:	gen_analytic.c utilities.o
-	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) -lm
 
 scale:	scale.c utilities.o
 	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
