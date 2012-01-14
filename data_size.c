@@ -38,18 +38,11 @@ int main(int argc, char **argv)
 		open_file(&normed_file, argv[2], "w");
 
 	has_normals = detect_normals(test_file);
-	switch(has_normals)
-	{
-		default:
-			fclose(test_file);
-			exit(EXIT_FAILURE);
-		case 0:
-			format_string = "%lf %lf %lf\n";
-			break;
-		case 1: 
-			format_string = "%lf %lf %lf %*f %*f %*f\n";
-			break;
-	}
+
+	if(has_normals)
+		format_string = "%lf %lf %lf %*f %*f %*f";
+	else
+		format_string = "%lf %lf %lf";
 
 	if( EOF == fscanf(test_file, format_string, &x, &y, &z) )
 	{

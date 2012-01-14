@@ -33,18 +33,10 @@ int main(int argc, char **argv)
 		ratio = (unsigned long)atoi(argv[4]);
 
 	has_normals = detect_normals(infile);
-	switch(has_normals)
-	{
-		default:
-			fclose(infile);
-			exit(EXIT_FAILURE);
-		case 0:
-			format_string = "%lf %lf %lf";
-			break;
-		case 1: 
-			format_string = "%lf %lf %lf %lf %lf %lf";
-			break;
-	}
+	if(has_normals)
+		format_string = "%lf %lf %lf";
+	else
+		format_string = "%lf %lf %lf %lf %lf %lf";
 
 	/* if there are no normals, nx, ny and nz are ignored */
 	while( EOF != fscanf(infile, format_string
