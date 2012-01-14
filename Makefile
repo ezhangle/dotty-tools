@@ -26,6 +26,7 @@ all:	gen_analytic \
 	shift_data
 
 clean:
+	rm utilities.o
 	rm -f $(TGT_DIR)/gen_analytic
 	rm -f $(TGT_DIR)/scale
 	rm -f $(TGT_DIR)/ysort
