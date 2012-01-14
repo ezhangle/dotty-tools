@@ -82,14 +82,16 @@ void generate_plane(FILE *pc_fp, FILE *npc_fp)
 
 void generate_sphere(FILE *pc_fp, FILE *npc_fp)
 {
-	double r = 30.0;
+	double r = 40.0;
 	double theta = -PI_BY_2;
 	double psi = 0.0;
-	double range = TWO_PI / 100.0; 
+	double range = TWO_PI / 500.0; 
 
 	for(; theta < PI_BY_2; theta+=range)
 	{
-		for(psi = 0.0; psi < 6.28318; psi+=range)
+		double val = 1 + (500 * cos(theta));
+		double inner_range = TWO_PI / val;
+		for(psi = PI_BY_4; psi < PI_BY_4 + TWO_PI; psi+=inner_range)
 		{
 			nx = cos(theta) * cos(psi);
 			ny = cos(theta) * sin(psi);
