@@ -61,5 +61,6 @@ int detect_normals(FILE *fp)
 		exit(EXIT_FAILURE);
 	}
 
+	free(first_line);
 	return has_normals;
 }
