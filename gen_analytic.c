@@ -24,33 +24,35 @@ int main()
 	FILE *pc_fp = NULL;
 	FILE *npc_fp = NULL;
 
-	open_file(&pc_fp, "plane.pts", "w");
-	open_file(&npc_fp, "plane.npts", "w");
+	open_file(&pc_fp, "plane.xyz", "w");
+	open_file(&npc_fp, "plane.xyz", "w");
 	generate_plane(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
-	open_file(&pc_fp, "sphere.pts", "w");
-	open_file(&npc_fp, "sphere.npts", "w");
+	open_file(&pc_fp, "sphere.xyz", "w");
+	open_file(&npc_fp, "sphere.xyz", "w");
 	generate_sphere(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
 #if 0
-	open_file(&pc_fp, "torus.pts", "w");
-	open_file(&npc_fp, "torus.npts", "w");
+	open_file(&pc_fp, "torus.xyz", "w");
+	open_file(&npc_fp, "torus.xyz", "w");
 	generate_torus(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
+#endif
 
-	open_file(&pc_fp, "cube.pts", "w");
-	open_file(&npc_fp, "cube.npts", "w");
+	open_file(&pc_fp, "cube.xyz", "w");
+	open_file(&npc_fp, "cube.xyz", "w");
 	generate_cube(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
-	open_file(&pc_fp, "bulbous.pts", "w");
-	open_file(&npc_fp, "bulbous.npts", "w");
+#if 0
+	open_file(&pc_fp, "bulbous.xyz", "w");
+	open_file(&npc_fp, "bulbous.xyz", "w");
 	generate_bulbous(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
@@ -169,47 +171,36 @@ void generate_cube(FILE *pc_fp, FILE *npc_fp)
 	for(; i != num_s; ++i)
 	{
 		
-		x = RANDY() * side_length;		nx = 0.0;
-		y = RANDY() * side_length;		ny = 0.0;
-		z = 0.5 * side_length;			nz = 1.0;
+		x = RANDY() * side_length;	nx = 0.0;
+		y = RANDY() * side_length;	ny = 0.0;
+		z = 0.5 * side_length;		nz = 1.0;
+
 		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
 		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
 
-		x = RANDY() * side_length;		nx = 0.0;
-		y = RANDY() * side_length;		ny = 0.0;
-		z = -0.5 * side_length;			nz = -1.0;
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", z, x, y);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+				, z, x, y, nz, nx, ny);
+
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, z, y);
+		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
+				, x, z, y, nx, nz, ny);
+
+		x *= -1.0; y *= -1.0; z*= -1.0;
+		nx *= -1.0; ny *= -1.0; nz*= -1.0;
+
 		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
 		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
 				, x, y, z, nx, ny, nz);
-		
-		x = RANDY() * side_length;		nx = 0.0;
-		y = 0.5 * side_length;			ny = 1.0;
-		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", z, x, y);
 		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
-				, x, y, z, nx, ny, nz);
-		
-		x = RANDY() * side_length;		nx = 0.0;
-		y = -0.5 * side_length;			ny = -1.0;
-		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
+				, z, x, y, nz, nx, ny);
+
+		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, z, y);
 		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
-				, x, y, z, nx, ny, nz);
-		
-		x = 0.5 * side_length;			nx = 1.0;
-		y = RANDY() * side_length;		ny = 0.0;
-		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
-		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
-				, x, y, z, nx, ny, nz);
-		
-		x = -0.5 * side_length;			nx = -1.0;
-		y = RANDY() * side_length;		ny = 0.0;
-		z = RANDY() * side_length;		nz = 0.0;
-		fprintf(pc_fp, "%09.7f %09.7f %09.7f\n", x, y, z);
-		fprintf(npc_fp, "%09.7f %09.7f %09.7f %09.7f %09.7f %09.7f\n"
-				, x, y, z, nx, ny, nz);
+				, x, z, y, nx, nz, ny);
 	}
 	return;
 }
