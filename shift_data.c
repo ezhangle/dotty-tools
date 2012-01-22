@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 	FILE *infile, *outfile;
 	double shift_x, shift_y, shift_z;
 	float x, y, z, nx, ny, nz;
-	int result;
+	int has_normals;
 
 	if(argc != 6)
 	{
@@ -24,18 +24,23 @@ int main(int argc, char *argv[])
 	open_file(&infile, argv[1], "r");
 	open_file(&outfile, argv[2], "w");
 
-	do{
-		result = fscanf(infile, "%f %f %f %f %f %f"
-					, &x, &y, &z, &nx, &ny, &nz);
+	has_normals = detect_normals(infile);
 
+	while(EOF != fscanf(infile, "%f %f %f", &x, &y, &z))
+	{
 		x += shift_x;
 		y += shift_y;
 		z += shift_z;
 
-		fprintf(outfile, "%f %f %f %f %f %f\n"
-					, x, y, z, nx, ny, nz);
+		fprintf(outfile, "%f %f %f\n", x, y, z);
+
+		if(has_normals)
+		{
+			if(EOF == fscanf(infile, "%f %f %f", &nx, &ny, &nz))
+				break;
+			fprintf(outfile, "%f %f %f\n", nx, ny, nz);
+		}
 	}
-	while(result!=EOF);
 
 	if(ferror(infile) || ferror(outfile))
 	{
