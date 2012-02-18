@@ -25,34 +25,34 @@ int main()
 	FILE *npc_fp = NULL;
 
 	open_file(&pc_fp, "plane.xyz", "w");
-	open_file(&npc_fp, "plane.xyz", "w");
+	open_file(&npc_fp, "nplane.xyz", "w");
 	generate_plane(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
 	open_file(&pc_fp, "sphere.xyz", "w");
-	open_file(&npc_fp, "sphere.xyz", "w");
+	open_file(&npc_fp, "nsphere.xyz", "w");
 	generate_sphere(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
 #if 0
 	open_file(&pc_fp, "torus.xyz", "w");
-	open_file(&npc_fp, "torus.xyz", "w");
+	open_file(&npc_fp, "ntorus.xyz", "w");
 	generate_torus(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 #endif
 
 	open_file(&pc_fp, "cube.xyz", "w");
-	open_file(&npc_fp, "cube.xyz", "w");
+	open_file(&npc_fp, "ncube.xyz", "w");
 	generate_cube(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
 #if 0
 	open_file(&pc_fp, "bulbous.xyz", "w");
-	open_file(&npc_fp, "bulbous.xyz", "w");
+	open_file(&npc_fp, "nbulbous.xyz", "w");
 	generate_bulbous(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
@@ -168,7 +168,7 @@ void generate_cube(FILE *pc_fp, FILE *npc_fp)
 	long int side_length = 80;
 	long int i = 0;
 
-	for(; i != num_s; ++i)
+	for(; i != (num_s/6); ++i)
 	{
 		
 		x = RANDY() * side_length;	nx = 0.0;
