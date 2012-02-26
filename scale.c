@@ -34,9 +34,9 @@ int main(int argc, char **argv)
 
 	has_normals = detect_normals(infile);
 	if(has_normals)
-		format_string = "%lf %lf %lf";
-	else
 		format_string = "%lf %lf %lf %lf %lf %lf";
+	else
+		format_string = "%lf %lf %lf";
 
 	/* if there are no normals, nx, ny and nz are ignored */
 	while( EOF != fscanf(infile, format_string
