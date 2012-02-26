@@ -63,15 +63,15 @@ int main()
 
 void generate_plane(FILE *pc_fp, FILE *npc_fp)
 {
-	double length = 50.0;
-	double width = 25.0;
+	double length = 100.0;
+	double width = 100.0;
 
 	double lpos = -length/2.0;
 	double wpos = -width/2.0;
 
-	for(; lpos < length; ++lpos)
+	for(; lpos < (length/2.0); lpos += 0.5)
 	{
-		for(wpos = -width/2.0; wpos < (width/2.0); ++wpos)
+		for(wpos = -width/2.0; wpos < (width/2.0); wpos += 0.5)
 		{
 			fprintf(pc_fp, "%f %f %f\n", lpos, wpos, 0.0);
 
@@ -87,7 +87,7 @@ void generate_sphere(FILE *pc_fp, FILE *npc_fp)
 	double r = 40.0;
 	double theta = -PI_BY_2;
 	double psi = 0.0;
-	double range = TWO_PI / 500.0; 
+	double range = TWO_PI / 1000.0; 
 
 	for(; theta < PI_BY_2; theta+=range)
 	{
@@ -164,8 +164,8 @@ void generate_torus(FILE *pc_fp, FILE *npc_fp)
 }	
 void generate_cube(FILE *pc_fp, FILE *npc_fp)
 {
-	long int num_s = 30000;
-	long int side_length = 80;
+	long int num_s = 400000;
+	long int side_length = 40;
 	long int i = 0;
 
 	for(; i != (num_s/6); ++i)
