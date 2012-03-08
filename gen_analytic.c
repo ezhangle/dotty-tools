@@ -36,13 +36,11 @@ int main()
 	fclose(pc_fp);
 	fclose(npc_fp);
 
-#if 0
 	open_file(&pc_fp, "torus.xyz", "w");
 	open_file(&npc_fp, "ntorus.xyz", "w");
 	generate_torus(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
-#endif
 
 	open_file(&pc_fp, "cube.xyz", "w");
 	open_file(&npc_fp, "ncube.xyz", "w");
