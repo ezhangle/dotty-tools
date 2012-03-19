@@ -65,7 +65,7 @@ void generate_plane(FILE *pc_fp, FILE *npc_fp)
 	double width = 100.0;
 
 	double lpos = -length/2.0;
-	double wpos = -width/2.0;
+	double wpos;
 
 	for(; lpos < (length/2.0); lpos += 0.5)
 	{
