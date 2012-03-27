@@ -1,0 +1,9 @@
+
+================= 1.1 ==================
+Remove unnecessary initialisation 	
+use .xyz extension (makes working with meshlab easier) 	
+Detect the presence of normals and automatically handle them
+Add utilities.o to clean target 	
+Don't create duplicate points in generate_sphere 	
+Place -lm flag at the end of the command line
+
