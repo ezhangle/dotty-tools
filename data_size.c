@@ -40,11 +40,12 @@ int main(int argc, char **argv)
 	has_normals = detect_normals(test_file);
 
 	if(has_normals)
-		format_string = "%lf %lf %lf %*f %*f %*f";
+		format_string = "%lf %lf %lf %lf %lf %lf";
 	else
 		format_string = "%lf %lf %lf";
 
-	if( EOF == fscanf(test_file, format_string, &x, &y, &z) )
+	if( EOF == fscanf(test_file, format_string
+				, &x, &y, &z, &nz, &ny, &nz) )
 	{
 		fprintf(stderr, "Error reading file, must exit.\n");
 		fclose(test_file);
@@ -56,7 +57,8 @@ int main(int argc, char **argv)
 	max_z = min_z = z;
 	++num_points;
 
-	while( EOF != fscanf(test_file, format_string, &x, &y, &z) )
+	while( EOF != fscanf(test_file, format_string
+				, &x, &y, &z, &nz, &ny, &nz) )
 	{
 		max_x = max(x, max_x);
 		max_y = max(y, max_y);
@@ -77,7 +79,7 @@ int main(int argc, char **argv)
 		double mid_y = (max_y + min_y)/2.0;
 		double mid_z = (max_z + min_z)/2.0;
 
-		fseek(test_file, 0, SEEK_SET);
+		rewind(test_file);
 
 		/* if there are no normals, nx, ny and nz are ignored */
 		while( EOF != fscanf(test_file, format_string
