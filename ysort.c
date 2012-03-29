@@ -34,9 +34,6 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	samp_fp = fopen(argv[1], "r");
-	ysort_fp = fopen(argv[2], "w");
-
 	open_file(&samp_fp, argv[1], "r");
 	open_file(&ysort_fp, argv[2], "w");
 
