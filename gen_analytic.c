@@ -9,6 +9,7 @@ void generate_torus(FILE *pc_fp, FILE *npc_fp);
 void generate_cube(FILE *pc_fp, FILE *npc_fp);
 void generate_sphere(FILE *pc_fp, FILE *npc_fp);
 void generate_bulbous(FILE *pc_fp, FILE *npc_fp);
+void generate_cone(FILE *pc_fp, FILE *npc_fp);
 
 double x, y, z, nx, ny, nz;
 
@@ -47,6 +48,12 @@ int main()
 	generate_cube(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
+
+	open_file(&pc_fp, "cone.xyz", "w");
+	//open_file(&npc_fp, "nsphere.xyz", "w");
+	generate_cone(pc_fp, npc_fp);
+	fclose(pc_fp);
+	//fclose(npc_fp);
 
 #if 0
 	open_file(&pc_fp, "bulbous.xyz", "w");
@@ -236,3 +243,42 @@ void generate_bulbous(FILE *pc_fp, FILE *npc_fp)
 	}
 	return;
 }
+
+void generate_cone(FILE *pc_fp, FILE *npc_fp)
+{
+	double base_radius = 20.0;
+	double height = 40.0;
+
+	double z = 0.0;
+	double theta = 0.0;
+
+	double radius = 0.0;
+	double x, y;
+//	for(; radius < base_radius; radius += 0.5)
+	{
+		for(theta = 0.0; theta < (2*PI); theta += 0.002)
+		{
+			radius = base_radius * (rand() / (RAND_MAX + 1.0));
+			x = radius * sin(theta);
+			y = radius * cos(theta);
+			
+			fprintf(pc_fp, "%f %f %f\n", x, y, 0.0);
+		}
+	}
+
+	for(; z<height; z += 1.0)
+	{
+		double radius = base_radius * ((height - z) / height);
+
+		double num_pts = 1+(5*(height - z));
+
+		for(theta = 0.0; theta < (2*PI); theta += (2*PI/num_pts))
+		{
+			x = radius * sin(theta);
+			y = radius * cos(theta);
+			fprintf(pc_fp, "%f %f %f\n", x, y, z);
+		}
+	}
+	return;
+}
+
