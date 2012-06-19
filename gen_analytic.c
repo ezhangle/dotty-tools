@@ -258,6 +258,7 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 	double x, y;
 	double nx, ny, nz;
 
+	/* do the points on the base */
 	for(theta = 0.0; theta < (2*PI); theta += 0.002)
 	{
 		radius = base_radius * (rand() / (RAND_MAX + 1.0));
@@ -265,30 +266,48 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 		y = radius * cos(theta);
 		
 		fprintf(pc_fp, "%f %f %f\n", x, y, 0.0);
-		fprintf(npc_fp, "%f %f %f\n", 0.0, 0.0, 1.0);
+
+		fprintf(npc_fp, "%f %f %f ", x, y, 0.0);
+		fprintf(npc_fp, "%f %f %f\n", 0.0, 0.0, -1.0);
 	}
 
+	/* do the points on the curved side */
 	for(; z<height; z += 1.0)
 	{
 		double radius = base_radius * ((height - z) / height);
 
 		double num_pts = 1+(5*(height - z));
 
-		double phi = arctan(height / base_radius);
-		nz = ;
+		double phi = atan(base_radius / height);
 
 		for(theta = 0.0; theta < (2*PI); theta += (2*PI/num_pts))
 		{
 			x = radius * sin(theta);
 			y = radius * cos(theta);
 
-			nx = cos(phi) * cos(theta);
-			ny = cos(phi) * sin(theta);
+			nx = sin(theta) * cos(phi);
+			ny = cos(theta) * cos(phi);
 			nz = sin(phi);
+
+			if(z < 0.5)
+				nz *= -1.0;
+
 			fprintf(pc_fp, "%f %f %f\n", x, y, z);
+
+			fprintf(npc_fp, "%f %f %f ", x, y, z);
 			fprintf(npc_fp, "%f %f %f\n", nx, ny, nz);
 		}
 	}
+
+	/* add a single point at the peak
+	*	note that the normal is actually
+	*	undefined at this point, but in practice
+	*	can reasonably be taken as (0,0,1)
+	*/
+	fprintf(pc_fp, "%f %f %f\n", x, y, z);
+	fprintf(npc_fp, "%f %f %f ", 0.0, 0.0, z);
+	fprintf(npc_fp, "%f %f %f\n", 0.0, 0.0, 1.0);
+
 	return;
 }
 
