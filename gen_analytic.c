@@ -25,6 +25,7 @@ int main()
 	FILE *pc_fp = NULL;
 	FILE *npc_fp = NULL;
 
+#if 0
 	open_file(&pc_fp, "plane.xyz", "w");
 	open_file(&npc_fp, "nplane.xyz", "w");
 	generate_plane(pc_fp, npc_fp);
@@ -48,12 +49,12 @@ int main()
 	generate_cube(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
-
+#endif
 	open_file(&pc_fp, "cone.xyz", "w");
-	//open_file(&npc_fp, "nsphere.xyz", "w");
+	open_file(&npc_fp, "ncone.xyz", "w");
 	generate_cone(pc_fp, npc_fp);
 	fclose(pc_fp);
-	//fclose(npc_fp);
+	fclose(npc_fp);
 
 #if 0
 	open_file(&pc_fp, "bulbous.xyz", "w");
@@ -251,19 +252,20 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 
 	double z = 0.0;
 	double theta = 0.0;
+	double phi;
 
 	double radius = 0.0;
 	double x, y;
-//	for(; radius < base_radius; radius += 0.5)
+	double nx, ny, nz;
+
+	for(theta = 0.0; theta < (2*PI); theta += 0.002)
 	{
-		for(theta = 0.0; theta < (2*PI); theta += 0.002)
-		{
-			radius = base_radius * (rand() / (RAND_MAX + 1.0));
-			x = radius * sin(theta);
-			y = radius * cos(theta);
-			
-			fprintf(pc_fp, "%f %f %f\n", x, y, 0.0);
-		}
+		radius = base_radius * (rand() / (RAND_MAX + 1.0));
+		x = radius * sin(theta);
+		y = radius * cos(theta);
+		
+		fprintf(pc_fp, "%f %f %f\n", x, y, 0.0);
+		fprintf(npc_fp, "%f %f %f\n", 0.0, 0.0, 1.0);
 	}
 
 	for(; z<height; z += 1.0)
@@ -272,11 +274,19 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 
 		double num_pts = 1+(5*(height - z));
 
+		double phi = arctan(height / base_radius);
+		nz = ;
+
 		for(theta = 0.0; theta < (2*PI); theta += (2*PI/num_pts))
 		{
 			x = radius * sin(theta);
 			y = radius * cos(theta);
+
+			nx = cos(phi) * cos(theta);
+			ny = cos(phi) * sin(theta);
+			nz = sin(phi);
 			fprintf(pc_fp, "%f %f %f\n", x, y, z);
+			fprintf(npc_fp, "%f %f %f\n", nx, ny, nz);
 		}
 	}
 	return;
