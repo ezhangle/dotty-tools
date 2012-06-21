@@ -247,8 +247,8 @@ void generate_bulbous(FILE *pc_fp, FILE *npc_fp)
 
 void generate_cone(FILE *pc_fp, FILE *npc_fp)
 {
-	double base_radius = 20.0;
-	double height = 40.0;
+	double base_radius = 30.0;
+	double height = 100.0;
 
 	double z = 0.0;
 	double theta = 0.0;
@@ -259,7 +259,7 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 	double nx, ny, nz;
 
 	/* do the points on the base */
-	for(theta = 0.0; theta < (2*PI); theta += 0.002)
+	for(theta = 0.0; theta < (2*PI); theta += 0.0005)
 	{
 		radius = base_radius * (rand() / (RAND_MAX + 1.0));
 		x = radius * sin(theta);
@@ -272,7 +272,7 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 	}
 
 	/* do the points on the curved side */
-	for(; z<height; z += 1.0)
+	for(; z<height; z += 0.5)
 	{
 		double radius = base_radius * ((height - z) / height);
 
