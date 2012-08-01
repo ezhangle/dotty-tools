@@ -11,6 +11,7 @@ void generate_sphere(FILE *pc_fp, FILE *npc_fp);
 void generate_bulbous(FILE *pc_fp, FILE *npc_fp);
 void generate_cone(FILE *pc_fp, FILE *npc_fp);
 
+double principal_size;
 double x, y, z, nx, ny, nz;
 
 #define PI		3.14159265259
@@ -20,12 +21,21 @@ double x, y, z, nx, ny, nz;
 
 #define RANDY()		(( rand() / (RAND_MAX+1.0) ) - 0.5)
 
-int main()
+int main(int argc, char *argv[])
 {
 	FILE *pc_fp = NULL;
 	FILE *npc_fp = NULL;
 
-#if 0
+	if(argc != 2)
+	{
+		principal_size = 0.0;
+	}
+	else
+	{
+		principal_size = atof(argv[1]);
+		printf("principal size = %f\n", principal_size);
+	}
+
 	open_file(&pc_fp, "plane.xyz", "w");
 	open_file(&npc_fp, "nplane.xyz", "w");
 	generate_plane(pc_fp, npc_fp);
@@ -38,25 +48,27 @@ int main()
 	fclose(pc_fp);
 	fclose(npc_fp);
 
+#if 0
 	open_file(&pc_fp, "torus.xyz", "w");
 	open_file(&npc_fp, "ntorus.xyz", "w");
 	generate_torus(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
+#endif
 
 	open_file(&pc_fp, "cube.xyz", "w");
 	open_file(&npc_fp, "ncube.xyz", "w");
 	generate_cube(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
-#endif
+
+#if 0
 	open_file(&pc_fp, "cone.xyz", "w");
 	open_file(&npc_fp, "ncone.xyz", "w");
 	generate_cone(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
 
-#if 0
 	open_file(&pc_fp, "bulbous.xyz", "w");
 	open_file(&npc_fp, "nbulbous.xyz", "w");
 	generate_bulbous(pc_fp, npc_fp);
@@ -69,15 +81,15 @@ int main()
 
 void generate_plane(FILE *pc_fp, FILE *npc_fp)
 {
-	double length = 100.0;
-	double width = 100.0;
+	double length = principal_size;
+	double width = principal_size;
 
 	double lpos = -length/2.0;
 	double wpos;
 
-	for(; lpos < (length/2.0); lpos += 0.5)
+	for(; lpos < (length/2.0); lpos += 0.25)
 	{
-		for(wpos = -width/2.0; wpos < (width/2.0); wpos += 0.5)
+		for(wpos = -width/2.0; wpos < (width/2.0); wpos += 0.25)
 		{
 			fprintf(pc_fp, "%f %f %f\n", lpos, wpos, 0.0);
 
@@ -90,7 +102,7 @@ void generate_plane(FILE *pc_fp, FILE *npc_fp)
 
 void generate_sphere(FILE *pc_fp, FILE *npc_fp)
 {
-	double r = 40.0;
+	double r = principal_size;
 	double theta = -PI_BY_2;
 	double psi = 0.0;
 	double range = TWO_PI / 1000.0; 
@@ -123,17 +135,17 @@ void generate_torus(FILE *pc_fp, FILE *npc_fp)
 {
 	double theta = 0.0;
 	double psi = 0.0;
-	double range = 6.28318 / 400.0; 
+	double range = TWO_PI / 400.0; 
 
-	double r_1 = 50.0;
-	double r_2 = 15.0;
+	double r_1 = principal_size;
+	double r_2 = principal_size / 4.0;
 	double pos[3];
 	double nrm[3];
 	double rm[3][3];
 
 	int i=0;
 
-	for(; theta < 6.28318; theta+=range)
+	for(; theta < TWO_PI; theta+=range)
 	{
 		rm[0][0] = rm[1][1] = cos(theta);
 		rm[0][1] = rm[1][0] = sin(theta);
@@ -142,7 +154,7 @@ void generate_torus(FILE *pc_fp, FILE *npc_fp)
 		rm[2][2] = 1.0;
 
 		/* generate points on a circular slice of the torus */
-		for(psi = 0.0; psi < 6.28318; psi+=range)
+		for(psi = 0.0; psi < TWO_PI; psi+=range)
 		{
 			/* work in x/z plane for simplicity */
 			x = r_1 + (r_2*cos(psi));
@@ -171,7 +183,7 @@ void generate_torus(FILE *pc_fp, FILE *npc_fp)
 void generate_cube(FILE *pc_fp, FILE *npc_fp)
 {
 	long int num_s = 400000;
-	long int side_length = 40;
+	long int side_length = (long)principal_size;
 	long int i = 0;
 
 	for(; i != (num_s/6); ++i)
@@ -212,18 +224,18 @@ void generate_cube(FILE *pc_fp, FILE *npc_fp)
 }
 void generate_bulbous(FILE *pc_fp, FILE *npc_fp)
 {
-	double r = 40.0;
-	double range = 6.28318 / 3000.0; 
+	double r = principal_size;
+	double range = TWO_PI / 3000.0; 
 
 	double theta = 0.0, psi = 0.0;
 	double dtheta, dpsi;
 
-	for(; theta < 3.141593; theta+=range)
+	for(; theta < PI; theta+=range)
 	{
 		/* generate points on a circular slice of the torus */
-		for(psi = 0.0; psi < 6.28318; psi+=range)
+		for(psi = 0.0; psi < TWO_PI; psi+=range)
 		{
-			r = 50.0 * sin(2*theta) * sin(2*psi);
+			r = principal_size * sin(2*theta) * sin(2*psi);
 
 			x = r * cos(theta) * cos(psi);
 			y = r * sin(theta) * cos(psi);
