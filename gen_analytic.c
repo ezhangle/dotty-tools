@@ -224,7 +224,7 @@ void generate_cube(FILE *pc_fp, FILE *npc_fp)
 }
 void generate_bulbous(FILE *pc_fp, FILE *npc_fp)
 {
-	double r = principal_size;
+	double r;
 	double range = TWO_PI / 3000.0; 
 
 	double theta = 0.0, psi = 0.0;
@@ -316,7 +316,7 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 	*	undefined at this point, but in practice
 	*	can reasonably be taken as (0,0,1)
 	*/
-	fprintf(pc_fp, "%f %f %f\n", x, y, z);
+	fprintf(pc_fp, "%f %f %f\n", 0.0, 0.0, z);
 	fprintf(npc_fp, "%f %f %f ", 0.0, 0.0, z);
 	fprintf(npc_fp, "%f %f %f\n", 0.0, 0.0, 1.0);
 
