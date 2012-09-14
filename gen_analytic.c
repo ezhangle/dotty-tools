@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 	if(argc != 2)
 	{
-		principal_size = 0.0;
+		principal_size = 30.0;
 	}
 	else
 	{
