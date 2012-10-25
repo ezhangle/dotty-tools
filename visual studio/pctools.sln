@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "data_size", "data_size\data_size.vcxproj", "{3A4ED76E-FA08-4506-9FAB-002E2278697A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gen_analytic", "gen_analytic\gen_analytic.vcxproj", "{F0CE19C5-A5BA-4D4B-A4ED-4E765A39D987}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scale_pc", "scale_pc\scale_pc.vcxproj", "{3F11CE01-653A-4ACB-B4F4-9252D141B3C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A4ED76E-FA08-4506-9FAB-002E2278697A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3A4ED76E-FA08-4506-9FAB-002E2278697A}.Debug|Win32.Build.0 = Debug|Win32
+		{3A4ED76E-FA08-4506-9FAB-002E2278697A}.Release|Win32.ActiveCfg = Release|Win32
+		{3A4ED76E-FA08-4506-9FAB-002E2278697A}.Release|Win32.Build.0 = Release|Win32
+		{F0CE19C5-A5BA-4D4B-A4ED-4E765A39D987}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F0CE19C5-A5BA-4D4B-A4ED-4E765A39D987}.Debug|Win32.Build.0 = Debug|Win32
+		{F0CE19C5-A5BA-4D4B-A4ED-4E765A39D987}.Release|Win32.ActiveCfg = Release|Win32
+		{F0CE19C5-A5BA-4D4B-A4ED-4E765A39D987}.Release|Win32.Build.0 = Release|Win32
+		{3F11CE01-653A-4ACB-B4F4-9252D141B3C3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3F11CE01-653A-4ACB-B4F4-9252D141B3C3}.Debug|Win32.Build.0 = Debug|Win32
+		{3F11CE01-653A-4ACB-B4F4-9252D141B3C3}.Release|Win32.ActiveCfg = Release|Win32
+		{3F11CE01-653A-4ACB-B4F4-9252D141B3C3}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
