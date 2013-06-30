@@ -9,17 +9,12 @@ PCCFLAGS=
 # the compiler flags actually used
 CFLAGS=$(GCCFLAGS)
 
-# linking flags used for the principal components analysis tool
-PCA_LD_FLAGS=-L/usr/local/lib -uloclib -lgsl -lgslcblas -lm
-PCA_FLAGS=$(CFLAGS) -ulocinclude -I/usr/local/include
-
 PCL_CFLAGS=-I/usr/include/pcl-1.6 -I/usr/include/eigen3
 
 TGT_DIR=$(HOME)/bin
 INST_DIR=/usr/local/bin
 
 all:	gen_analytic \
-	pca \
 	pca-pcl \
 	scale \
 	ysort \
@@ -41,7 +36,6 @@ clean:
 	rm -f $(TGT_DIR)/noff2npts
 	rm -f $(TGT_DIR)/swap_yz
 	rm -f $(TGT_DIR)/shift_data
-	rm -f $(TGT_DIR)/pca
 	rm -f $(TGT_DIR)/pca-pcl
 
 install:
@@ -55,7 +49,6 @@ install:
 	cp -f $(TGT_DIR)/swap_yz	$(INST_DIR)/
 	cp -f $(TGT_DIR)/shift_data	$(INST_DIR)/
 	cp -f $(TGT_DIR)/evec_angles	$(INST_DIR)/
-	cp -f $(TGT_DIR)/pca		$(INST_DIR)/
 	cp -f $(TGT_DIR)/pca-pcl	$(INST_DIR)/
 
 uninstall:
@@ -67,14 +60,10 @@ uninstall:
 	rm -f $(INST_DIR)/noff2npts
 	rm -f $(INST_DIR)/swap_yz
 	rm -f $(INST_DIR)/shift_data
-	rm -f $(INST_DIR)/pca
 	rm -f $(INST_DIR)/pca-pcl
 
 evec_angles:	evec_angles.c
 	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
-
-pca:		pca.c 
-	$(CC) $(PCA_FLAGS) -o $(TGT_DIR)/pca pca.c $(PCA_LD_FLAGS) 
 
 pca-pcl:	pca-pcl.cpp
 	g++ $(PCL_CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) -lpcl_common
