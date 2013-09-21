@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct { double x, y, z; } vector;
 typedef struct { double eval; vector evec; } evector;
 
+double angle( vector A, vector B );
 vector cross_product(vector A, vector B);
 int evec_comp(const void *one, const void *two);
 
@@ -55,8 +57,9 @@ int main(int argc, char *argv[])
 	for(i=0; i!=Num_Evecs; ++i)
 	{
 		rotn_axes[i] = cross_product(A[i].evec, B[i].evec);
-		printf("rotation axis %d: %f %f %f\n"
-			, i+1
+
+		fprintf(ab_rotn_matrix, "%f %f %f %f\n"
+			, angle(A[i].evec, B[i].evec)
 			, rotn_axes[i].x
 			, rotn_axes[i].y
 			, rotn_axes[i].z);
@@ -95,4 +98,15 @@ int evec_comp(const void *one, const void *two)
 	return 0;
 }
 
+
+/* calculate angle between A and B using the dot product */
+double angle( vector A, vector B )
+{
+	double dot_product = (double)A.x*B.x + A.y*B.y + A.z*B.z;
+
+	double mod_A = sqrt( (double)A.x*A.x + A.y*A.y + A.z*A.z );
+	double mod_B = sqrt( (double)B.x*B.x + B.y*B.y + B.z*B.z );
+
+	return acos( dot_product/(mod_A * mod_B) );
+}
 
