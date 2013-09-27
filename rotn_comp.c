@@ -11,6 +11,20 @@ int evec_comp(const void *one, const void *two);
 
 const int Num_Evecs = 3;
 
+/*
+*	This program computes the rotation axes from 2 eigenvector
+*	files whose format is:
+*		eigenvalue x-component y-component z-component
+*	and prints them to a third file: "output.rmx".
+*
+*	Prior to any the eigenvectors are sorted in decreasing
+*	order of (signed) eigenvalue size. The cross product is
+*	then taken of the first pair of eigenvectors, then the
+*	second, then the third. Since the cross product is not
+*	commutative the first vector in "A x B" is taken from the
+*	first file.
+*/
+
 int main(int argc, char *argv[])
 {
 	int i = 0;
