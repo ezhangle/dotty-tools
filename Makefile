@@ -23,8 +23,9 @@ all:	gen_analytic \
 	noff2npts \
 	swap_yz \
 	shift_data \
-	rotn_comp
-	evec_angles
+	evec_angles \
+	rotn_comp \
+	apply_rotation.c
 
 clean:
 	rm utilities.o
@@ -39,6 +40,7 @@ clean:
 	rm -f $(TGT_DIR)/shift_data
 	rm -f $(TGT_DIR)/pca-pcl
 	rm -f $(TGT_DIR)/rotn_comp
+	rm -f $(TGT_DIR)/apply_rotation
 
 install:
 	make all
@@ -53,6 +55,7 @@ install:
 	cp -f $(TGT_DIR)/evec_angles	$(INST_DIR)/
 	cp -f $(TGT_DIR)/pca-pcl	$(INST_DIR)/
 	cp -f $(TGT_DIR)/rotn_comp	$(INST_DIR)/
+	cp -f $(TGT_DIR)/apply_rotation	$(INST_DIR)/
 
 uninstall:
 	rm -f $(INST_DIR)/gen_analytic
@@ -65,11 +68,15 @@ uninstall:
 	rm -f $(INST_DIR)/shift_data
 	rm -f $(INST_DIR)/pca-pcl
 	rm -f $(INST_DIR)/rotn_comp
+	rm -f $(INST_DIR)/apply_rotation
 
 evec_angles:	evec_angles.c
 	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
 
 rotn_comp:	rotn_comp.c
+	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
+
+apply_rotation:	apply_rotation.c
 	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
 
 pca-pcl:	pca-pcl.cpp
