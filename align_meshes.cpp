@@ -8,12 +8,33 @@
 #include <pcl/common/pca.h>
 #include <pcl/impl/point_types.hpp>
 
-#define NUM_COLS 3
-#define NUM_ROWS 3
-
-#include "utilities.h"
+/* utilities.h is used for C programs as well */
+extern "C" {
+	#include "utilities.h"
+}
 
 const double PI = 3.14159265359;
+const int Num_Rows = 3;
+
+void perform_pca(FILE *cloud, std::vector<evector>& eigenvectors);
+
+int apply_rotation(int argc, char *argv[]);
+
+int find_evec_angles(std::vector<double>& evec_angles
+	, std::vector<evector> evecsA
+	, std::vector<evector> evecsB);
+
+int compute_rotations(std::vector<evector> evecsA
+	, std::vector<evector> evecsB);
+
+void sort_eigenvectors(std::vector<evector>& evecs);
+
+double compute_angle(evector &A, evector &B);
+
+/* same as an eigenvector, but with clearer variable names */
+typedef struct { double angle; vector axis; } rotation;
+
+
 
 int main(int argc, char *argv[])
 {
@@ -31,19 +52,29 @@ int main(int argc, char *argv[])
 	FILE *output_mesh = fopen(argv[4], "w");
 
 	std::vector<evector> evecsA, evecsB;
+	std::vector<double> evec_angles;
+	std::vector<rotation> rotns;
 	
 	perform_pca(cloudA, evecsA);
 	perform_pca(cloudB, evecsB);
 
-	find_evec_angles(argc, argv);
-	compute_rotation_matrix(argc, argv);
-	apply_rotation(argc, argv);
+	find_evec_angles(evec_angles, evecsA, evecsB);
+	compute_rotations(rotns, evecsA, evecsB);
+
+	rotate_vector(rotns1
+
+
+
+
+	apply_rotation(rotns[0], input_mesh, output_mesh);
 
 	return EXIT_SUCCESS;
 }
 	
 
-int apply_rotation(int argc, char *argv[])
+int apply_rotation(rotation &rotn
+	, FILE *input_mesh
+	, FILE *output_mesh)
 {
 	double angle = 0.0;
 	vector pt;
@@ -52,27 +83,13 @@ int apply_rotation(int argc, char *argv[])
 	double planar_angle = 0.0;
 
 	/* rotation angle to align rot_axis with standard axis */
-	double axis_angle = 0.0;
-
-	FILE *input_pts = NULL;
-	FILE *output_pts = NULL;
-
-	vector rot_axis = { 0.0, 0.0, 0.0 };
-	vector temp_axis = rot_axis;
+	double axis_angle = rotns
 
 	double actual_mat[3][3];
 	double planar_mat[3][3];
 	double axis_mat[3][3];
 	double inv_planar_mat[3][3];
 	double inv_axis_mat[3][3];
-
-	if(argc != 7)
-	{
-		printf("Format: %s <radians> <x-comp> <y-comp> <z-comp>"
-			" <input> <output>\n"
-			, argv[0]);
-		return EXIT_FAILURE;
-	}
 
 	angle = atof(argv[1]);
 	rot_axis.x = atof(argv[2]);
@@ -83,21 +100,15 @@ int apply_rotation(int argc, char *argv[])
 	output_pts = fopen(argv[6], "w");
 
 	printf("x = %f\ny = %f\nz = %f\n"
-		, rot_axis.x
-		, rot_axis.y
-		, rot_axis.z);
+		, rotn.axis.x
+		, rotn.axis.y
+		, rotn.axis.z);
 
-	if(!input_pts || !output_pts)
-	{
-		printf("Unable to open files\n");
-		exit(EXIT_FAILURE);
-	}
-
-	temp_axis = rot_axis;
+	temp_axis = rotn.axis;
 	
 
 	/* rotate around z axis such that x component is 0 */
-	planar_angle = atan(-rot_axis.x / rot_axis.y);
+	planar_angle = atan(-rotn.axis.x / rotn.axis.y);
 	setup_for_rotation(planar_mat, Z_Axis, planar_angle);
 	setup_for_rotation(inv_planar_mat, Z_Axis, -planar_angle);
 	rotate_vector(planar_mat, &temp_axis);
@@ -157,7 +168,7 @@ void perform_pca(FILE *cloud, std::vector<evector>& eigenvectors)
 	Eigen::Matrix3f evecs = pca.getEigenVectors();
 	Eigen::Vector3f evals = pca.getEigenValues();
 
-	for(int i=0; i!=NUM_ROWS; ++i)
+	for(int i=0; i!=Num_Rows; ++i)
 	{
 		evector tmp;
 
@@ -172,36 +183,45 @@ void perform_pca(FILE *cloud, std::vector<evector>& eigenvectors)
 }
 
 
-void rearrange_eigenvectors(evector vectors[2][3]);
-
-double compute_angle(eigenvector *A, eigenvector *B);
-
-int sort_eigenvectors(const void *A, const void *B);
-
-
 int find_evec_angles(std::vector<double>& evec_angles
 	, std::vector<evector> evecsA
 	, std::vector<evector> evecsB)
 {
-	rearrange_eigenvectors(evecsA, evecsB);
+	sort_eigenvectors(evecsA);
+	sort_eigenvectors(evecsB);
 
 	for(int i=0; i!=3; ++i)
 	{
-		double angle = compute_angle(evecsA[i], evecsB[i]));
+		double angle = compute_angle(evecsA[i], evecsB[i]);
 		evec_angles.push_back(angle);
 	}
 
 	return 0;
 }
 
-void rearrange_eigenvectors(eigenvector_st vectors[2][3])
+void sort_eigenvectors(std::vector<evector>& evecs)
 {
-	int file = 0;
-
-	for(file=0; file != 2; ++file)
+	if(evecs[0].eval > evecs[1].eval)
 	{
-		qsort(&vectors[file][0], 3, sizeof(vectors[file][0]), sort_eigenvectors);
+		evector tmp = evecs[1];
+		evecs[1] = evecs[0];
+		evecs[0] = tmp;
 	}
+
+	if(evecs[1].eval > evecs[2].eval)
+	{
+		evector tmp = evecs[2];
+		evecs[2] = evecs[1];
+		evecs[1] = tmp;
+	}
+
+	if(evecs[0].eval > evecs[1].eval)
+	{
+		evector tmp = evecs[1];
+		evecs[1] = evecs[0];
+		evecs[0] = tmp;
+	}
+
 	return;
 }
 
@@ -224,73 +244,20 @@ double compute_angle(evector &A, evector &B)
 	return radians;
 }
 
-int sort_eigenvectors(const void *evec_A, const void *evec_B)
-{
-	eigenvector_st *A = (eigenvector_st*)evec_A;
-
-	eigenvector_st *B = (eigenvector_st*)evec_B;
-
-	if(A->val > B->val)
-		return 1;
-
-	if(A->val < B->val)
-		return -1;
-
-	return 0;
-}
-
-const int Num_Evecs = 3;
-
-/*
-*	This program computes the rotation axes from 2 eigenvector
-*	files whose format is:
-*		eigenvalue x-component y-component z-component
-*	and prints them to a third file: "output.rmx".
-*
-*	Prior to any the eigenvectors are sorted in decreasing
-*	order of (signed) eigenvalue size. The cross product is
-*	then taken of the first pair of eigenvectors, then the
-*	second, then the third. Since the cross product is not
-*	commutative the first vector in "A x B" is taken from the
-*	first file.
-*/
-
-int compute_rotation_matrix(std::vector<evector> evecsA
+void compute_rotations(std::vector<rotation>& rotns
+	, std::vector<evector> evecsA
 	, std::vector<evector> evecsB)
 {
-	evector rotations[3];
+	sort_eigenvectors(evecsA);
+	sort_eigenvectors(evecsB);
 
-	FILE *ab_rotn_matrix = NULL;
-
-	vector rotn_axes[3];
-
-	ab_rotn_matrix = fopen(argv[3], "w");
-
-	/* make sure the eigenvectors are sorted by size, 
-	* in decreasing size */
-	qsort(A, Num_Evecs, sizeof(evector), evec_comp);
-	qsort(B, Num_Evecs, sizeof(evector), evec_comp);
-
-	for(i=0; i!=Num_Evecs; ++i)
-	{
-		rotn_axes[i] = cross_product(A[i].evec, B[i].evec);
-
-		rotations[i].eval = angle(A[i].evec, B[i].evec);
-		rotations[i].evec = rotn_axes[i];
-	}
-	/*qsort(rotations, Num_Evecs, sizeof(evector), evec_comp);*/
-
+	const int Num_Evecs = 3;
 	for(int i=0; i!=Num_Evecs; ++i)
 	{
-		fprintf(ab_rotn_matrix, "%f %f %f %f\n"
-			, rotations[i].eval
-			, rotations[i].evec.x
-			, rotations[i].evec.y
-			, rotations[i].evec.z);
+		rotns[i].angle = angle(evecsA[i].evec, evecsB[i].evec);
+		rotns[i].axis = cross_product(evecsA[i].evec, evecsB[i].evec);
 	}
 
-	fclose(ab_rotn_matrix);
-
-	return 0;
+	return;
 }
 
