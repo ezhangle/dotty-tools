@@ -13,7 +13,37 @@
 
 #include "utilities.h"
 
+const double PI = 3.14159265359;
+
 int main(int argc, char *argv[])
+{
+	if(argc != 5)
+	{
+		std::cout << "syntax: " << argv[0];
+		std::cout << " <cloud A> <cloud B> <mesh B>";
+		std::cout << " <rotated mesh B>" << std::endl;
+
+		return EXIT_SUCCESS;
+	}
+	FILE *cloudA = fopen(argv[1], "r");
+	FILE *cloudB = fopen(argv[2], "r");
+	FILE *input_mesh = fopen(argv[3], "r");
+	FILE *output_mesh = fopen(argv[4], "w");
+
+	std::vector<evector> evecsA, evecsB;
+	
+	perform_pca(cloudA, evecsA);
+	perform_pca(cloudB, evecsB);
+
+	find_evec_angles(argc, argv);
+	compute_rotation_matrix(argc, argv);
+	apply_rotation(argc, argv);
+
+	return EXIT_SUCCESS;
+}
+	
+
+int apply_rotation(int argc, char *argv[])
 {
 	double angle = 0.0;
 	vector pt;
@@ -101,38 +131,20 @@ int main(int argc, char *argv[])
 }
 
 
-
-typedef struct { double x, y, z; } vector;
-
-
-int main(int argc, char *argv[])
+void perform_pca(FILE *cloud, std::vector<evector>& eigenvectors)
 {
-	if(argc != 3)
-	{
-		std::cout << "You must specify 2 files" << std::endl;
-		return 0;
-	}
-
 	pcl::PointCloud<pcl::PointXYZ> pt_cloud;
-//	std::ifstream cloud(argv[1]);
-
-	FILE *cloud = fopen(argv[1], "r");
-
-	std::cerr << "prior to loop" << std::endl;
 
 	int ctr = 0;
 	double dummy;
-//	while(!cloud.eof() && !cloud.ferror())
 	do
 	{
 		pcl::PointXYZ pt;
 		fscanf(cloud, "%f %f %f %f", &pt.x, &pt.y, &pt.z, &dummy);
-		//cloud >> pt.x >> pt.y >> pt.z >> dummy;
 
 		pt_cloud.push_back(pt);
 	}
 	while(!feof(cloud) && !ferror(cloud));
-//	cloud.close();
 	fclose(cloud);
 
 
@@ -145,82 +157,41 @@ int main(int argc, char *argv[])
 	Eigen::Matrix3f evecs = pca.getEigenVectors();
 	Eigen::Vector3f evals = pca.getEigenValues();
 
-	std::ofstream anglefile(argv[2]);
 	for(int i=0; i!=NUM_ROWS; ++i)
 	{
-		anglefile << evals(i) << " ";
-		anglefile << evecs(0,i) << " "
-			<< evecs(1,i) << " "
-			<< evecs(2,i) << std::endl;
-	}
-	anglefile.close();
+		evector tmp;
 
-	std::cerr << "done getting stuff" << std::endl;
-	
-	return 0;
+		tmp.eval = evals(i);
+		tmp.evec.x = evecs(0,i);
+		tmp.evec.x = evecs(1,i);
+		tmp.evec.x = evecs(2,i);
+
+		eigenvectors.push_back(tmp);
+	}
+	return;
 }
 
-const double PI = 3.14159265359;
 
-typedef struct { double val, x, y, z; } eigenvector_st;
+void rearrange_eigenvectors(evector vectors[2][3]);
 
-void read_data_files(char *argv[], eigenvector_st vectors[2][3]);
-
-void rearrange_eigenvectors(eigenvector_st vectors[2][3]);
-
-double compute_angle(eigenvector_st *A, eigenvector_st *B);
+double compute_angle(eigenvector *A, eigenvector *B);
 
 int sort_eigenvectors(const void *A, const void *B);
 
 
-int main(int argc, char *argv[])
+int find_evec_angles(std::vector<double>& evec_angles
+	, std::vector<evector> evecsA
+	, std::vector<evector> evecsB)
 {
-	eigenvector_st vectors[2][3];
-	double angle[3] = { 0.0, 0.0, 0.0 };
-	int i=0;
+	rearrange_eigenvectors(evecsA, evecsB);
 
-	if(argc != 3)
+	for(int i=0; i!=3; ++i)
 	{
-		printf("syntax is: %s <file 1> <file 2>\n", argv[0]);
-		exit(EXIT_FAILURE);
-	}
-
-	read_data_files(argv, vectors);
-	rearrange_eigenvectors(vectors);
-
-	for(i=0; i!=3; ++i)
-	{
-		angle[i] = compute_angle(&vectors[0][i], &vectors[1][i]);
-		printf("angle[%d] = %f\n", i, angle[i]);
+		double angle = compute_angle(evecsA[i], evecsB[i]));
+		evec_angles.push_back(angle);
 	}
 
 	return 0;
-}
-
-void read_data_files(char *argv[], eigenvector_st vectors[2][3])
-{
-	int file = 0, i=0;
-
-	for(file=0; file != 2; ++file)
-	{
-		FILE *data_fp = fopen(argv[file+1], "r");
-
-		if(!data_fp)
-		{
-			printf("unable to open \"%s\"\n", argv[file+1]);
-			exit(EXIT_FAILURE);
-		}
-		for(i=0; i!=3; ++i)
-		{
-			fscanf(data_fp, "%lf %lf %lf %lf\n"
-				, &vectors[file][i].val
-				, &vectors[file][i].x
-				, &vectors[file][i].y
-				, &vectors[file][i].z);
-		}
-		fclose(data_fp);
-	}
-	return;
 }
 
 void rearrange_eigenvectors(eigenvector_st vectors[2][3])
@@ -234,12 +205,20 @@ void rearrange_eigenvectors(eigenvector_st vectors[2][3])
 	return;
 }
 
-double compute_angle(eigenvector_st *A, eigenvector_st *B)
+double compute_angle(evector &A, evector &B)
 {
-	double size_A = sqrt( A->x*A->x + A->y*A->y + A->z*A->z);
-	double size_B = sqrt( B->x*B->x + B->y*B->y + B->z*B->z);
+	double size_A = sqrt( A.evec.x*A.evec.x
+			+ A.evec.y*A.evec.y
+			+ A.evec.z*A.evec.z);
 
-	double dot_product = (A->x*B->x) + (A->y*B->y) + (A->z*B->z);
+	double size_B = sqrt( B.evec.x*B.evec.x
+			+ B.evec.y*B.evec.y
+			+ B.evec.z*B.evec.z);
+
+	double dot_product = (A.evec.x*B.evec.x)
+				+ (A.evec.y*B.evec.y)
+				+ (A.evec.z*B.evec.z);
+
 	double radians = acos(dot_product / (size_A*size_B)) ;
 
 	return radians;
@@ -248,6 +227,7 @@ double compute_angle(eigenvector_st *A, eigenvector_st *B)
 int sort_eigenvectors(const void *evec_A, const void *evec_B)
 {
 	eigenvector_st *A = (eigenvector_st*)evec_A;
+
 	eigenvector_st *B = (eigenvector_st*)evec_B;
 
 	if(A->val > B->val)
@@ -275,51 +255,16 @@ const int Num_Evecs = 3;
 *	first file.
 */
 
-int main(int argc, char *argv[])
+int compute_rotation_matrix(std::vector<evector> evecsA
+	, std::vector<evector> evecsB)
 {
-	int i = 0;
-	evector A[3], B[3];
 	evector rotations[3];
 
-	FILE *eva_fp = NULL;
-	FILE *evb_fp = NULL;
 	FILE *ab_rotn_matrix = NULL;
 
 	vector rotn_axes[3];
 
-	if(argc != 4)
-	{
-		printf("usage: %s <evec file> <evec file> <output>\n"
-			, argv[0]);
-		return 0;
-	}
-
-	eva_fp = fopen(argv[1], "r");
-	evb_fp = fopen(argv[2], "r");
 	ab_rotn_matrix = fopen(argv[3], "w");
-
-	if(!eva_fp || !evb_fp || !ab_rotn_matrix)
-	{
-		fprintf(stderr, "one or more files did not open\n");
-		exit(EXIT_FAILURE);
-	}
-	
-
-	/* read eigenvectors and eigenvalues from a file */
-	for(; i!=Num_Evecs; ++i)
-	{
-		fscanf(eva_fp, "%lf %lf %lf %lf"
-			, &A[i].eval
-			, &A[i].evec.x
-			, &A[i].evec.y
-			, &A[i].evec.z);
-
-		fscanf(evb_fp, "%lf %lf %lf %lf"
-			, &B[i].eval
-			, &B[i].evec.x
-			, &B[i].evec.y
-			, &B[i].evec.z);
-	}
 
 	/* make sure the eigenvectors are sorted by size, 
 	* in decreasing size */
@@ -335,7 +280,7 @@ int main(int argc, char *argv[])
 	}
 	/*qsort(rotations, Num_Evecs, sizeof(evector), evec_comp);*/
 
-	for(i=0; i!=Num_Evecs; ++i)
+	for(int i=0; i!=Num_Evecs; ++i)
 	{
 		fprintf(ab_rotn_matrix, "%f %f %f %f\n"
 			, rotations[i].eval
@@ -344,8 +289,6 @@ int main(int argc, char *argv[])
 			, rotations[i].evec.z);
 	}
 
-	fclose(eva_fp);
-	fclose(evb_fp);
 	fclose(ab_rotn_matrix);
 
 	return 0;
