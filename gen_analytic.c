@@ -264,7 +264,6 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp)
 
 	double z = 0.0;
 	double theta = 0.0;
-	double phi;
 
 	double radius = 0.0;
 	double x, y;

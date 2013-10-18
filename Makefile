@@ -5,6 +5,7 @@ CLANGFLAGS=	-ansi -pedantic --analyze
 GCCFLAGS=	-ansi -pedantic -Wall -Wextra -O2
 TCCFLAGS=	-Wall -Wunsupported
 PCCFLAGS=	
+LD_FLAGS=	-lm
 
 # the compiler flags actually used
 CFLAGS=$(GCCFLAGS)
@@ -15,7 +16,6 @@ TGT_DIR=$(HOME)/bin
 INST_DIR=/usr/local/bin
 
 all:	gen_analytic \
-	pca-pcl \
 	scale \
 	ysort \
 	data_size \
@@ -26,6 +26,8 @@ all:	gen_analytic \
 	evec_angles \
 	rotn_comp \
 	apply_rotation.c
+
+#	pca-pcl \
 
 clean:
 	rm utilities.o
@@ -70,41 +72,41 @@ uninstall:
 	rm -f $(INST_DIR)/rotn_comp
 	rm -f $(INST_DIR)/apply_rotation
 
-evec_angles:	evec_angles.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
+evec_angles:	evec_angles.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
-rotn_comp:	rotn_comp.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
+rotn_comp:	rotn_comp.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
-apply_rotation:	apply_rotation.c
-	$(CC) $(CFLAGS) $(<) -o $(TGT_DIR)/$(@) -lm
+apply_rotation:	apply_rotation.c utilities.o
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 pca-pcl:	pca-pcl.cpp
 	g++ $(PCL_CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) -lpcl_common
 
 ysort:		ysort.c utilities.o
-	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 shift_data:	shift_data.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 swap_yz:	swap_yz.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 gen_analytic:	gen_analytic.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) -lm
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)  $(LD_FLAGS)
 
 scale:	scale.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 data_size:	data_size.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 noff2npts:	noff2npts.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 bnpts2npts:	bnpts2npts.c utilities.o
-	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 utilities.o:	utilities.c utilities.h
 	$(CC) -c $(CFLAGS) $(<) -o $(@)

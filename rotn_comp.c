@@ -2,12 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef struct { double x, y, z; } vector;
-typedef struct { double eval; vector evec; } evector;
-
-double angle( vector A, vector B );
-vector cross_product(vector A, vector B);
-int evec_comp(const void *one, const void *two);
+#include "utilities.h"
 
 const int Num_Evecs = 3;
 
@@ -29,6 +24,7 @@ int main(int argc, char *argv[])
 {
 	int i = 0;
 	evector A[3], B[3];
+	evector rotations[3];
 
 	FILE *eva_fp = NULL;
 	FILE *evb_fp = NULL;
@@ -36,9 +32,16 @@ int main(int argc, char *argv[])
 
 	vector rotn_axes[3];
 
+	if(argc != 4)
+	{
+		printf("usage: %s <evec file> <evec file> <output>\n"
+			, argv[0]);
+		return 0;
+	}
+
 	eva_fp = fopen(argv[1], "r");
 	evb_fp = fopen(argv[2], "r");
-	ab_rotn_matrix = fopen("output.rmx", "w");
+	ab_rotn_matrix = fopen(argv[3], "w");
 
 	if(!eva_fp || !evb_fp || !ab_rotn_matrix)
 	{
@@ -72,11 +75,18 @@ int main(int argc, char *argv[])
 	{
 		rotn_axes[i] = cross_product(A[i].evec, B[i].evec);
 
+		rotations[i].eval = angle(A[i].evec, B[i].evec);
+		rotations[i].evec = rotn_axes[i];
+	}
+	/*qsort(rotations, Num_Evecs, sizeof(evector), evec_comp);*/
+
+	for(i=0; i!=Num_Evecs; ++i)
+	{
 		fprintf(ab_rotn_matrix, "%f %f %f %f\n"
-			, angle(A[i].evec, B[i].evec)
-			, rotn_axes[i].x
-			, rotn_axes[i].y
-			, rotn_axes[i].z);
+			, rotations[i].eval
+			, rotations[i].evec.x
+			, rotations[i].evec.y
+			, rotations[i].evec.z);
 	}
 
 	fclose(eva_fp);
@@ -84,43 +94,5 @@ int main(int argc, char *argv[])
 	fclose(ab_rotn_matrix);
 
 	return 0;
-}
-
-
-vector cross_product(vector A, vector B)
-{
-	vector C;
-
-	C.x =  (A.y * B.z) - (A.z * B.y);
-	C.y = -(A.x * B.z) + (A.z * B.x);
-	C.z =  (A.y * B.x) - (A.x * B.y);
-
-	return C;
-}
-
-int evec_comp(const void *one, const void *two)
-{
-	evector *evec1 = (evector*)one;
-	evector *evec2 = (evector*)two;
-
-	if(evec1->eval > evec2->eval)
-		return 1;
-
-	if(evec1->eval < evec2->eval)
-		return -1;
-
-	return 0;
-}
-
-
-/* calculate angle between A and B using the dot product */
-double angle( vector A, vector B )
-{
-	double dot_product = (double)A.x*B.x + A.y*B.y + A.z*B.z;
-
-	double mod_A = sqrt( (double)A.x*A.x + A.y*A.y + A.z*A.z );
-	double mod_B = sqrt( (double)B.x*B.x + B.y*B.y + B.z*B.z );
-
-	return acos( dot_product/(mod_A * mod_B) );
 }
 

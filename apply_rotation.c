@@ -2,19 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef struct { double x, y, z; } vector;
-
-void rotate_vector(double rot[3][3], vector *new_vector);
-void setup_for_rotation(double rot[3][3], int Axis, double theta);
-void print_matrix(char *name, double mat[3][3]);
-
-
-enum
-{
-	X_Axis,
-	Y_Axis,
-	Z_Axis
-};
+#include "utilities.h"
 
 int main(int argc, char *argv[])
 {
@@ -100,96 +88,7 @@ int main(int argc, char *argv[])
 		fprintf(output_pts, "%f %f %f 1.0\n", pt.x, pt.y, pt.z);
 	}
 
-#if 0
-	print_matrix("planar", planar_mat);
-	print_matrix("axis", axis_mat);
-	print_matrix("actual", actual_mat);
-	print_matrix("inv_axis", inv_axis_mat);
-	print_matrix("inv_planar", inv_planar_mat);
-#endif
-
 	return EXIT_SUCCESS;
 }
-
-void print_matrix(char *name, double mat[3][3])
-{
-	printf("Matrix \"%s\":\n", name);
-	printf("%06.5f %06.5f %06.5f\n", mat[0][0], mat[0][1], mat[0][2]); 
-	printf("%06.5f %06.5f %06.5f\n", mat[1][0], mat[1][1], mat[1][2]); 
-	printf("%06.5f %06.5f %06.5f\n", mat[2][0], mat[2][1], mat[2][2]); 
-	printf("\n");
-}
-
-void rotate_vector(double rot[3][3], vector *new_vector)
-{
-	vector vect = *new_vector;
-
-	new_vector->x =    (rot[0][0] * vect.x)
-			+ (rot[0][1] * vect.y)
-			+ (rot[0][2] * vect.z);
-	
-	new_vector->y =    (rot[1][0] * vect.x)
-			+ (rot[1][1] * vect.y)
-			+ (rot[1][2] * vect.z);
-
-	new_vector->z =    (rot[2][0] * vect.x)
-			+ (rot[2][1] * vect.y)
-			+ (rot[2][2] * vect.z);
-
-	return;
-}
-
-void setup_for_rotation(double rot[3][3], int Axis, double theta)
-{
-	switch(Axis)
-	{
-		case X_Axis:
-			rot[0][0] = 1.0;
-			rot[0][1] = 0.0;
-			rot[0][2] = 0.0;
-
-			rot[1][0] = 0.0;
-			rot[1][1] = cos(theta);
-			rot[1][2] = sin(theta);
-
-			rot[2][0] = 0.0;
-			rot[2][1] = -sin(theta);
-			rot[2][2] = cos(theta);
-			return;
-
-		case Y_Axis:
-			rot[0][0] = cos(theta);
-			rot[0][1] = 0.0;
-			rot[0][2] = sin(theta);
-
-			rot[1][0] = 0.0;
-			rot[1][1] = 1.0;
-			rot[1][2] = 0.0;
-
-			rot[2][0] = -sin(theta);
-			rot[2][1] = 0.0;
-			rot[2][2] = cos(theta);
-			break;
-
-		case Z_Axis:
-			rot[0][0] = cos(theta);
-			rot[0][1] = sin(theta);
-			rot[0][2] = 0.0;
-
-			rot[1][0] = -sin(theta);
-			rot[1][1] = cos(theta);
-			rot[1][2] = 0.0;
-
-			rot[2][0] = 0.0;
-			rot[2][1] = 0.0;
-			rot[2][2] = 1.0;
-			break;
-	}
-	return;
-}
-
-
-
-
 
 

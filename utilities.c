@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+#include "utilities.h"
 
 void open_file(FILE **fp
 		, char *filename
@@ -64,3 +67,122 @@ int detect_normals(FILE *fp)
 	free(first_line);
 	return has_normals;
 }
+
+void print_matrix(char *name, double mat[3][3])
+{
+	printf("Matrix \"%s\":\n", name);
+	printf("%06.5f %06.5f %06.5f\n", mat[0][0], mat[0][1], mat[0][2]); 
+	printf("%06.5f %06.5f %06.5f\n", mat[1][0], mat[1][1], mat[1][2]); 
+	printf("%06.5f %06.5f %06.5f\n", mat[2][0], mat[2][1], mat[2][2]); 
+	printf("\n");
+}
+
+void rotate_vector(double rot[3][3], vector *new_vector)
+{
+	vector vect = *new_vector;
+
+	new_vector->x =    (rot[0][0] * vect.x)
+			+ (rot[0][1] * vect.y)
+			+ (rot[0][2] * vect.z);
+	
+	new_vector->y =    (rot[1][0] * vect.x)
+			+ (rot[1][1] * vect.y)
+			+ (rot[1][2] * vect.z);
+
+	new_vector->z =    (rot[2][0] * vect.x)
+			+ (rot[2][1] * vect.y)
+			+ (rot[2][2] * vect.z);
+
+	return;
+}
+
+void setup_for_rotation(double rot[3][3], int Axis, double theta)
+{
+	switch(Axis)
+	{
+		case X_Axis:
+			rot[0][0] = 1.0;
+			rot[0][1] = 0.0;
+			rot[0][2] = 0.0;
+
+			rot[1][0] = 0.0;
+			rot[1][1] = cos(theta);
+			rot[1][2] = sin(theta);
+
+			rot[2][0] = 0.0;
+			rot[2][1] = -sin(theta);
+			rot[2][2] = cos(theta);
+			return;
+
+		case Y_Axis:
+			rot[0][0] = cos(theta);
+			rot[0][1] = 0.0;
+			rot[0][2] = sin(theta);
+
+			rot[1][0] = 0.0;
+			rot[1][1] = 1.0;
+			rot[1][2] = 0.0;
+
+			rot[2][0] = -sin(theta);
+			rot[2][1] = 0.0;
+			rot[2][2] = cos(theta);
+			break;
+
+		case Z_Axis:
+			rot[0][0] = cos(theta);
+			rot[0][1] = sin(theta);
+			rot[0][2] = 0.0;
+
+			rot[1][0] = -sin(theta);
+			rot[1][1] = cos(theta);
+			rot[1][2] = 0.0;
+
+			rot[2][0] = 0.0;
+			rot[2][1] = 0.0;
+			rot[2][2] = 1.0;
+			break;
+	}
+	return;
+}
+
+vector cross_product(vector A, vector B)
+{
+	vector C;
+
+	C.x =  (A.y * B.z) - (A.z * B.y);
+	C.y = -(A.x * B.z) + (A.z * B.x);
+	C.z =  (A.x * B.y) - (A.y * B.x);
+
+	return C;
+}
+
+int evec_comp(const void *one, const void *two)
+{
+	evector *evec1 = (evector*)one;
+	evector *evec2 = (evector*)two;
+
+	if(evec1->eval > evec2->eval)
+		return 1;
+
+	if(evec1->eval < evec2->eval)
+		return -1;
+
+	return 0;
+}
+
+
+/* calculate angle between A and B using the dot product */
+double angle( vector A, vector B )
+{
+	double dot_product = (double)A.x*B.x + A.y*B.y + A.z*B.z;
+
+	double mod_A = sqrt( (double)A.x*A.x + A.y*A.y + A.z*A.z );
+	double mod_B = sqrt( (double)B.x*B.x + B.y*B.y + B.z*B.z );
+
+	return acos( dot_product/(mod_A * mod_B) );
+}
+
+
+
+
+

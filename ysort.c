@@ -4,7 +4,6 @@
 
 #include "utilities.h"
 
-typedef struct { float x, y, z; }	vector;
 typedef struct { vector pos, norm; }	sample_point;
 
 int cmp(const void *arg1, const void *arg2);
@@ -40,7 +39,7 @@ int main(int argc, char *argv[])
 	fscanf(samp_fp, "%*f %*f %lf", &last_z);
 	rewind(samp_fp);
 
-	while(EOF != fscanf(samp_fp, "%f %f %f %f %f %f"
+	while(EOF != fscanf(samp_fp, "%lf %lf %lf %lf %lf %lf"
 		, &pt.pos.x, &pt.pos.y, &pt.pos.z
 		, &pt.norm.x, &pt.norm.y, &pt.norm.z))
 	{

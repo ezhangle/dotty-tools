@@ -84,7 +84,7 @@ double compute_angle(eigenvector_st *A, eigenvector_st *B)
 	double dot_product = (A->x*B->x) + (A->y*B->y) + (A->z*B->z);
 	double radians = acos(dot_product / (size_A*size_B)) ;
 
-	return (180 * radians / PI);
+	return radians;
 }
 
 int sort_eigenvectors(const void *evec_A, const void *evec_B)
