@@ -12,8 +12,8 @@ CFLAGS=$(GCCFLAGS)
 
 PCL_CFLAGS=-I/usr/include/pcl-1.6 -I/usr/include/eigen3
 
-TGT_DIR=$(HOME)/bin
-INST_DIR=/usr/local/bin
+TGT_DIR=.
+INST_DIR=$(HOME)/bin
 
 all:	gen_analytic \
 	scale \
