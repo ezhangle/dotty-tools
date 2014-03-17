@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 	if(argc != 7)
 	{
 		printf("Format: %s <radians> <x-comp> <y-comp> <z-comp>"
-			" <input> <output>\n"
-			, argv[0]);
+			" <input> <output> (ac=%d)\n"
+			, argv[0], argc);
 		return EXIT_FAILURE;
 	}
 
@@ -86,7 +86,14 @@ int main(int argc, char *argv[])
 		rotate_vector(inv_planar_mat, &pt);
 
 		fprintf(output_pts, "%f %f %f 1.0\n", pt.x, pt.y, pt.z);
+
+		if(feof(input_pts) || ferror(input_pts))
+			break;
+		if(feof(output_pts) || ferror(output_pts))
+			break;
 	}
+	fclose(input_pts);
+	fclose(output_pts);
 
 	return EXIT_SUCCESS;
 }
