@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	for(i=0; i!=3; ++i)
 	{
 		angle[i] = compute_angle(&vectors[0][i], &vectors[1][i]);
-		printf("angle[%d] = %f\n", i, angle[i]);
+		/*printf("angle[%d] = %f\n", i, angle[i]);*/
 	}
 
 	return 0;

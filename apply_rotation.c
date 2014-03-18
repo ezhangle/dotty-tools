@@ -43,11 +43,6 @@ int main(int argc, char *argv[])
 	input_pts = fopen(argv[5], "r");
 	output_pts = fopen(argv[6], "w");
 
-	printf("x = %f\ny = %f\nz = %f\n"
-		, rot_axis.x
-		, rot_axis.y
-		, rot_axis.z);
-
 	if(!input_pts || !output_pts)
 	{
 		printf("Unable to open files\n");
@@ -56,15 +51,15 @@ int main(int argc, char *argv[])
 
 	temp_axis = rot_axis;
 	
-
 	/* rotate around z axis such that x component is 0 */
 	planar_angle = atan(-rot_axis.x / rot_axis.y);
 	setup_for_rotation(planar_mat, Z_Axis, planar_angle);
 	setup_for_rotation(inv_planar_mat, Z_Axis, -planar_angle);
 	rotate_vector(planar_mat, &temp_axis);
 
-	printf("YZ contained:\nx: %f\ny: %f\nz = %f\n"
-		, temp_axis.x, temp_axis.y, temp_axis.z);
+
+/*	printf("YZ contained:\nx: %f\ny: %f\nz = %f\n"
+		, temp_axis.x, temp_axis.y, temp_axis.z);*/
 
 	setup_for_rotation(actual_mat, Y_Axis, angle);
 
@@ -74,8 +69,8 @@ int main(int argc, char *argv[])
 	setup_for_rotation(inv_axis_mat, X_Axis, -axis_angle);
 	rotate_vector(axis_mat, &temp_axis);
 
-	printf("Y parallel:\nx: %f\ny: %f\nz = %f\n"
-		, temp_axis.x, temp_axis.y, temp_axis.z);
+/*	printf("Y parallel:\nx: %f\ny: %f\nz = %f\n"
+		, temp_axis.x, temp_axis.y, temp_axis.z);*/
 	
 	while(EOF != fscanf(input_pts, "%lf %lf %lf %*f", &pt.x, &pt.y, &pt.z))
 	{

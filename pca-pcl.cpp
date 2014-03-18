@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	pcl::PointCloud<pcl::PointXYZ> pt_cloud;
 	std::ifstream cloud(argv[1]);
 
-	std::cerr << "prior to loop" << std::endl;
+	//std::cerr << "prior to loop" << std::endl;
 
 	int ctr = 0;
 	double dummy;
@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
 
 	pcl::PCA<pcl::PointXYZ> pca;
 
-	std::cerr << "setting input cloud" << std::endl;
+	//std::cerr << "setting input cloud" << std::endl;
 	pca.setInputCloud(pt_cloud.makeShared());
 
-	std::cerr << "getting stuff" << std::endl;
+	//std::cerr << "getting stuff" << std::endl;
 	Eigen::Matrix3f evecs = pca.getEigenVectors();
 	Eigen::Vector3f evals = pca.getEigenValues();
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	}
 	anglefile.close();
 
-	std::cerr << "done getting stuff" << std::endl;
+	//std::cerr << "done getting stuff" << std::endl;
 	
 	return 0;
 }
