@@ -16,7 +16,7 @@ TGT_DIR=.
 INST_DIR=$(HOME)/bin
 
 all:	gen_analytic \
-	apply_rotation
+	apply_rotation \
 	scale \
 	ysort \
 	data_size \
