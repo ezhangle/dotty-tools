@@ -21,25 +21,25 @@ int main(int argc, char *argv[])
 	}
 
 	pcl::PointCloud<pcl::PointXYZ> pt_cloud;
+	auto sPC = pt_cloud.makeShared();
 	std::ifstream cloud(argv[1]);
 
 	//std::cerr << "prior to loop" << std::endl;
 
 	int ctr = 0;
 	double dummy;
-	while(!cloud.eof())
+	while(!cloud.eof() && !cloud.bad() && !cloud.fail())
 	{
 		pcl::PointXYZ pt;
 		cloud >> pt.x >> pt.y >> pt.z >> dummy;
-
-		pt_cloud.push_back(pt);
+		sPC->push_back(pt);
 	}
 	cloud.close();
 
 	pcl::PCA<pcl::PointXYZ> pca;
 
 	//std::cerr << "setting input cloud" << std::endl;
-	pca.setInputCloud(pt_cloud.makeShared());
+	pca.setInputCloud(sPC);
 
 	//std::cerr << "getting stuff" << std::endl;
 	Eigen::Matrix3f evecs = pca.getEigenVectors();
