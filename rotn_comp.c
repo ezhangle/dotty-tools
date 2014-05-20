@@ -73,6 +73,8 @@ int main(int argc, char *argv[])
 
 	for(i=0; i!=Num_Evecs; ++i)
 	{
+		normalise_vector(&A[i].evec);
+		normalise_vector(&B[i].evec);
 		rotn_axes[i] = cross_product(A[i].evec, B[i].evec);
 
 		rotations[i].eval = angle(A[i].evec, B[i].evec);
