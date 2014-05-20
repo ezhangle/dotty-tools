@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 #include "utilities.h"
 
@@ -15,6 +16,24 @@ void open_file(FILE **fp
 
 	fprintf(stderr, "Unable to open %s, aborting.\n", filename);
 	exit(EXIT_FAILURE);
+}
+
+void normalise_vector(vector *A)
+{
+	double xx = A->x * A->x;
+	double yy = A->y * A->y;
+	double zz = A->z * A->z;
+
+	double size = (double)sqrt(xx + yy + zz);
+
+	if(size > DBL_EPSILON)
+	{
+		A->x /= size;
+		A->y /= size;
+		A->z /= size;
+	}
+	
+	return;
 }
 
 int detect_normals(FILE *fp)
@@ -161,10 +180,10 @@ int evec_comp(const void *one, const void *two)
 	evector *evec1 = (evector*)one;
 	evector *evec2 = (evector*)two;
 
-	if(evec1->eval > evec2->eval)
+	if(fabs(evec1->eval) > fabs(evec2->eval))
 		return 1;
 
-	if(evec1->eval < evec2->eval)
+	if(fabs(evec1->eval) < fabs(evec2->eval))
 		return -1;
 
 	return 0;
