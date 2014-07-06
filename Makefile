@@ -2,7 +2,7 @@ CC=gcc
 
 # suggested compiler-specific flags
 CLANGFLAGS=	-ansi -pedantic --analyze
-GCCFLAGS=	-ansi -pedantic -Wall -Wextra -O2
+GCCFLAGS=	-ansi -pedantic -Wall -Wextra -O2 -march=native
 TCCFLAGS=	-Wall -Wunsupported
 PCCFLAGS=	
 LD_FLAGS=	-lm
@@ -86,7 +86,7 @@ pca-pcl:	pca-pcl.cpp
 	g++ $(PCL_CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) -lpcl_common
 
 ysort:		ysort.c utilities.o
-	$(CC) $(CFLAGS) -lm $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
+	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
 
 shift_data:	shift_data.c utilities.o
 	$(CC) $(CFLAGS) $(<) utilities.o -o $(TGT_DIR)/$(@) $(LD_FLAGS)
