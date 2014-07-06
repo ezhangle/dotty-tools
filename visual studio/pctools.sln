@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gen_analytic", "gen_analyti
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scale_pc", "scale_pc\scale_pc.vcxproj", "{3F11CE01-653A-4ACB-B4F4-9252D141B3C3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pca-pcl", "pcaßpcl\pcaßpcl.vcxproj", "{593151D6-C241-4891-8060-C6933F06423F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pca-pcl", "pca-pcl\pca-pcl.vcxproj", "{593151D6-C241-4891-8060-C6933F06423F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rotn_comp", "rotn_comp\rotn_comp.vcxproj", "{89044897-A87A-403C-A8AB-1E0F9D9BC565}"
 EndProject
