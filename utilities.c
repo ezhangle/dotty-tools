@@ -5,13 +5,14 @@
 
 #include "utilities.h"
 
+
 void open_file(FILE **fp
-		, char *filename
-		, char *mode)
+			   , char *filename
+			   , char *mode)
 {
 	*fp = fopen(filename, mode);
 
-	if(*fp)
+	if (*fp)
 		return;
 
 	fprintf(stderr, "Unable to open %s, aborting.\n", filename);
@@ -26,13 +27,13 @@ void normalise_vector(vector *A)
 
 	double size = (double)sqrt(xx + yy + zz);
 
-	if(size > DBL_EPSILON)
+	if (size > DBL_EPSILON)
 	{
 		A->x /= size;
 		A->y /= size;
 		A->z /= size;
 	}
-	
+
 	return;
 }
 
@@ -49,9 +50,10 @@ int detect_normals(FILE *fp)
 	{
 		ch = fgetc(fp);
 		++line_length;
-	} while(ch!=EOF && ch!='\n' && ch!='\r');
+	}
+	while (ch != EOF && ch != '\n' && ch != '\r');
 
-	if(line_length==0)
+	if (line_length == 0)
 	{
 		printf("Error reading first line of file.\n");
 		exit(EXIT_FAILURE);
@@ -60,7 +62,7 @@ int detect_normals(FILE *fp)
 	rewind(fp);
 	first_line = malloc(line_length);
 
-	if(NULL==first_line)
+	if (NULL == first_line)
 	{
 		printf("Not enough memory for normal detection.\n");
 		exit(EXIT_FAILURE);
@@ -70,16 +72,16 @@ int detect_normals(FILE *fp)
 	rewind(fp);
 
 	items = sscanf(first_line, "%f %f %f %f %f %f"
-			, &fl , &fl , &fl , &fl , &fl , &fl);
+				   , &fl , &fl , &fl , &fl , &fl , &fl);
 
-	if(items == 6)
+	if (items == 6)
 		has_normals = 1;
-	else if(items == 3)
+	else if (items == 3)
 		has_normals = 0;
 	else
 	{
 		printf("%d items present per line: ambiguous."
-			" Unexpected results likely.\n", items);
+			   " Unexpected results likely.\n", items);
 		exit(EXIT_FAILURE);
 	}
 
@@ -90,9 +92,9 @@ int detect_normals(FILE *fp)
 void print_matrix(char *name, double mat[3][3])
 {
 	printf("Matrix \"%s\":\n", name);
-	printf("%06.5f %06.5f %06.5f\n", mat[0][0], mat[0][1], mat[0][2]); 
-	printf("%06.5f %06.5f %06.5f\n", mat[1][0], mat[1][1], mat[1][2]); 
-	printf("%06.5f %06.5f %06.5f\n", mat[2][0], mat[2][1], mat[2][2]); 
+	printf("%06.5f %06.5f %06.5f\n", mat[0][0], mat[0][1], mat[0][2]);
+	printf("%06.5f %06.5f %06.5f\n", mat[1][0], mat[1][1], mat[1][2]);
+	printf("%06.5f %06.5f %06.5f\n", mat[2][0], mat[2][1], mat[2][2]);
 	printf("\n");
 }
 
@@ -101,23 +103,23 @@ void rotate_vector(double rot[3][3], vector *new_vector)
 	vector vect = *new_vector;
 
 	new_vector->x =    (rot[0][0] * vect.x)
-			+ (rot[0][1] * vect.y)
-			+ (rot[0][2] * vect.z);
-	
+					   + (rot[0][1] * vect.y)
+					   + (rot[0][2] * vect.z);
+
 	new_vector->y =    (rot[1][0] * vect.x)
-			+ (rot[1][1] * vect.y)
-			+ (rot[1][2] * vect.z);
+					   + (rot[1][1] * vect.y)
+					   + (rot[1][2] * vect.z);
 
 	new_vector->z =    (rot[2][0] * vect.x)
-			+ (rot[2][1] * vect.y)
-			+ (rot[2][2] * vect.z);
+					   + (rot[2][1] * vect.y)
+					   + (rot[2][2] * vect.z);
 
 	return;
 }
 
 void setup_for_rotation(double rot[3][3], int Axis, double theta)
 {
-	switch(Axis)
+	switch (Axis)
 	{
 		case X_Axis:
 			rot[0][0] = 1.0;
@@ -177,13 +179,13 @@ vector cross_product(vector A, vector B)
 
 int evec_comp(const void *one, const void *two)
 {
-	evector *evec1 = (evector*)one;
-	evector *evec2 = (evector*)two;
+	evector *evec1 = (evector *)one;
+	evector *evec2 = (evector *)two;
 
-	if(fabs(evec1->eval) > fabs(evec2->eval))
+	if (fabs(evec1->eval) > fabs(evec2->eval))
 		return 1;
 
-	if(fabs(evec1->eval) < fabs(evec2->eval))
+	if (fabs(evec1->eval) < fabs(evec2->eval))
 		return -1;
 
 	return 0;
@@ -193,12 +195,12 @@ int evec_comp(const void *one, const void *two)
 /* calculate angle between A and B using the dot product */
 double angle( vector A, vector B )
 {
-	double dot_product = (double)A.x*B.x + A.y*B.y + A.z*B.z;
+	double dot_product = (double)A.x * B.x + A.y * B.y + A.z * B.z;
 
-	double mod_A = sqrt( (double)A.x*A.x + A.y*A.y + A.z*A.z );
-	double mod_B = sqrt( (double)B.x*B.x + B.y*B.y + B.z*B.z );
+	double mod_A = sqrt( (double)A.x * A.x + A.y * A.y + A.z * A.z );
+	double mod_B = sqrt( (double)B.x * B.x + B.y * B.y + B.z * B.z );
 
-	return acos( dot_product/(mod_A * mod_B) );
+	return acos( dot_product / (mod_A * mod_B) );
 }
 
 

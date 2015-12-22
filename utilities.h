@@ -3,8 +3,8 @@
 int detect_normals(FILE *fp);
 
 void open_file(FILE **fp
-		, char *filename
-		, char *mode);
+			   , char *filename
+			   , char *mode);
 
 enum { X_Axis, Y_Axis, Z_Axis };
 
