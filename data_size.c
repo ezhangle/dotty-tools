@@ -28,9 +28,8 @@ int main(int argc, char **argv)
 
 	if( argc < 2 )
 	{
-		fprintf(stderr, "format is: %s <file-to-test>"
-				" <opt: normalised-file>\n", argv[0] );
-		return 1;
+		fprintf(stderr, "format is: %s <file-to-test> <opt: normalised-file>\n", argv[0] );
+		return EXIT_FAILURE;
 	}
 
 	open_file(&test_file, argv[1], "r");
@@ -44,8 +43,7 @@ int main(int argc, char **argv)
 	else
 		format_string = "%lf %lf %lf";
 
-	if( EOF == fscanf(test_file, format_string
-				, &x, &y, &z, &nz, &ny, &nz) )
+	if( EOF == fscanf(test_file, format_string, &x, &y, &z, &nz, &ny, &nz) )
 	{
 		fprintf(stderr, "Error reading file, must exit.\n");
 		fclose(test_file);
@@ -57,8 +55,7 @@ int main(int argc, char **argv)
 	max_z = min_z = z;
 	++num_points;
 
-	while( EOF != fscanf(test_file, format_string
-				, &x, &y, &z, &nz, &ny, &nz) )
+	while( EOF != fscanf(test_file, format_string, &x, &y, &z, &nz, &ny, &nz) )
 	{
 		max_x = max(x, max_x);
 		max_y = max(y, max_y);
@@ -82,16 +79,13 @@ int main(int argc, char **argv)
 		rewind(test_file);
 
 		/* if there are no normals, nx, ny and nz are ignored */
-		while( EOF != fscanf(test_file, format_string
-				, &x, &y, &z, &nx, &ny, &nz) )
+		while( EOF != fscanf(test_file, format_string, &x, &y, &z, &nx, &ny, &nz) )
 		{
-			fprintf(normed_file, "%f %f %f"
-				, x-mid_x, y-mid_y, z-mid_z);
+			fprintf(normed_file, "%f %f %f", x-mid_x, y-mid_y, z-mid_z);
 
 			if(has_normals)
 			{
-				fprintf(normed_file, " %f %f %f"
-							, nx, ny, nz);
+				fprintf(normed_file, " %f %f %f", nx, ny, nz);
 			}
 			fprintf(normed_file, "\n");
 		}

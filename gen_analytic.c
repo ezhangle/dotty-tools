@@ -14,7 +14,7 @@ void generate_cone(FILE *pc_fp, FILE *npc_fp);
 double principal_size;
 double x, y, z, nx, ny, nz;
 
-#define PI		3.14159265259
+#define PI		3.14159265359
 #define TWO_PI		(2*PI)
 #define PI_BY_2		(PI/2.0)
 #define PI_BY_4		(PI/4.0)
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 	if(argc != 2)
 	{
-		principal_size = 30.0;
+		principal_size = 160.0;
 	}
 	else
 	{
@@ -48,13 +48,11 @@ int main(int argc, char *argv[])
 	fclose(pc_fp);
 	fclose(npc_fp);
 
-#if 0
 	open_file(&pc_fp, "torus.xyz", "w");
 	open_file(&npc_fp, "ntorus.xyz", "w");
 	generate_torus(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
-#endif
 
 	open_file(&pc_fp, "cube.xyz", "w");
 	open_file(&npc_fp, "ncube.xyz", "w");
@@ -62,7 +60,6 @@ int main(int argc, char *argv[])
 	fclose(pc_fp);
 	fclose(npc_fp);
 
-#if 0
 	open_file(&pc_fp, "cone.xyz", "w");
 	open_file(&npc_fp, "ncone.xyz", "w");
 	generate_cone(pc_fp, npc_fp);
@@ -74,7 +71,6 @@ int main(int argc, char *argv[])
 	generate_bulbous(pc_fp, npc_fp);
 	fclose(pc_fp);
 	fclose(npc_fp);
-#endif
 
 	return EXIT_SUCCESS;
 }
@@ -135,7 +131,7 @@ void generate_torus(FILE *pc_fp, FILE *npc_fp)
 {
 	double theta = 0.0;
 	double psi = 0.0;
-	double range = TWO_PI / 400.0; 
+	double range = TWO_PI / 600.0; 
 
 	double r_1 = principal_size;
 	double r_2 = principal_size / 4.0;
@@ -225,7 +221,7 @@ void generate_cube(FILE *pc_fp, FILE *npc_fp)
 void generate_bulbous(FILE *pc_fp, FILE *npc_fp)
 {
 	double r;
-	double range = TWO_PI / 3000.0; 
+	double range = TWO_PI / 1000.0; 
 
 	double theta = 0.0, psi = 0.0;
 	double dtheta, dpsi;
